@@ -11,12 +11,16 @@
 @interface CameraViewController ()
 {
     H264HWEncoder *h264Encoder;
+    AACEncoder *aacEncoder;
     AVCaptureSession *captureSession;
     bool startCalled;
     AVCaptureVideoPreviewLayer *previewLayer;
     NSString *h264File;
+    NSString *aacFile;
     NSFileHandle *fileH264Handle;
-    AVCaptureConnection* connection;
+    NSFileHandle *fileAACHandle;
+    AVCaptureConnection* connectionVideo;
+    AVCaptureConnection* connectionAudio;
 }
 @property (weak, nonatomic) IBOutlet UIButton *StartStopButton;
 @end
@@ -29,6 +33,11 @@
     
     h264Encoder = [H264HWEncoder alloc];
     [h264Encoder initWithConfiguration];
+    h264Encoder.delegate = self;
+    
+    aacEncoder = [[AACEncoder alloc] init];
+    aacEncoder.delegate = self;
+    
     startCalled = true;
 }
 
@@ -71,29 +80,33 @@
     NSError *deviceError;
     
     AVCaptureDevice *cameraDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDevice *microphoneDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
     
-    AVCaptureDeviceInput *inputDevice = [AVCaptureDeviceInput deviceInputWithDevice:cameraDevice error:&deviceError];
+    AVCaptureDeviceInput *inputCameraDevice = [AVCaptureDeviceInput deviceInputWithDevice:cameraDevice error:&deviceError];
+    AVCaptureDeviceInput *inputMicrophoneDevice = [AVCaptureDeviceInput deviceInputWithDevice:microphoneDevice error:&deviceError];
     
     // make output device
     
-    AVCaptureVideoDataOutput *outputDevice = [[AVCaptureVideoDataOutput alloc] init];
+    AVCaptureVideoDataOutput *outputVideoDevice = [[AVCaptureVideoDataOutput alloc] init];
     
     NSString* key = (NSString*)kCVPixelBufferPixelFormatTypeKey;
+    NSNumber* val = [NSNumber numberWithUnsignedInt:kCVPixelFormatType_420YpCbCr8BiPlanarFullRange];
+    NSDictionary* videoSettings = [NSDictionary dictionaryWithObject:val forKey:key];
+    outputVideoDevice.videoSettings = videoSettings;
     
-    NSNumber* val = [NSNumber
-                     numberWithUnsignedInt:kCVPixelFormatType_420YpCbCr8BiPlanarFullRange];
-    NSDictionary* videoSettings =
-    [NSDictionary dictionaryWithObject:val forKey:key];
-    outputDevice.videoSettings = videoSettings;
+    [outputVideoDevice setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
     
-    [outputDevice setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
+    AVCaptureAudioDataOutput *outputAudioDevice = [[AVCaptureAudioDataOutput alloc] init];
+    [outputAudioDevice setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
     
     // initialize capture session
     
     captureSession = [[AVCaptureSession alloc] init];
     
-    [captureSession addInput:inputDevice];
-    [captureSession addOutput:outputDevice];
+    [captureSession addInput:inputCameraDevice];
+    [captureSession addInput:inputMicrophoneDevice];
+    [captureSession addOutput:outputVideoDevice];
+    [captureSession addOutput:outputAudioDevice];
     
     // begin configuration for the AVCaptureSession
     [captureSession beginConfiguration];
@@ -101,7 +114,8 @@
     // picture resolution
     [captureSession setSessionPreset:[NSString stringWithString:AVCaptureSessionPreset640x480]];
     
-    connection = [outputDevice connectionWithMediaType:AVMediaTypeVideo];
+    connectionVideo = [outputVideoDevice connectionWithMediaType:AVMediaTypeVideo];
+    connectionAudio = [outputAudioDevice connectionWithMediaType:AVMediaTypeAudio];
     [self setRelativeVideoOrientation];
     
     NSNotificationCenter* notify = [NSNotificationCenter defaultCenter];
@@ -131,15 +145,22 @@
     NSString *documentsDirectory = [paths objectAtIndex:0];
     
     // Drop file to raw 264 track
-    h264File = [documentsDirectory stringByAppendingPathComponent:@"test.264"];
+    h264File = [documentsDirectory stringByAppendingPathComponent:@"test.h264"];
     [fileManager removeItemAtPath:h264File error:nil];
     [fileManager createFileAtPath:h264File contents:nil attributes:nil];
     
     // Open the file using POSIX as this is anyway a test application
     fileH264Handle = [NSFileHandle fileHandleForWritingAtPath:h264File];
     
-    [h264Encoder startEncode:480 height:640];
-    h264Encoder.delegate = self;
+    // Drop file to raw aac track
+    aacFile = [documentsDirectory stringByAppendingPathComponent:@"test.aac"];
+    [fileManager removeItemAtPath:aacFile error:nil];
+    [fileManager createFileAtPath:aacFile contents:nil attributes:nil];
+    
+    // Open the file using POSIX as this is anyway a test application
+    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
+    
+    [h264Encoder startEncode:480 height:640 bitrate:550];
 }
 
 - (void)statusBarOrientationDidChange:(NSNotification*)notification {
@@ -152,18 +173,16 @@
 #if defined(__IPHONE_8_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
         case UIInterfaceOrientationUnknown:
 #endif
-            connection.videoOrientation = AVCaptureVideoOrientationPortrait;
-            
+            connectionVideo.videoOrientation = AVCaptureVideoOrientationPortrait;
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
-            connection.videoOrientation =
-            AVCaptureVideoOrientationPortraitUpsideDown;
+            connectionVideo.videoOrientation = AVCaptureVideoOrientationPortraitUpsideDown;
             break;
         case UIInterfaceOrientationLandscapeLeft:
-            connection.videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
+            connectionVideo.videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
             break;
         case UIInterfaceOrientationLandscapeRight:
-            connection.videoOrientation = AVCaptureVideoOrientationLandscapeRight;
+            connectionVideo.videoOrientation = AVCaptureVideoOrientationLandscapeRight;
             break;
         default:
             break;
@@ -176,42 +195,52 @@
     [previewLayer removeFromSuperlayer];
     [fileH264Handle closeFile];
     fileH264Handle = NULL;
+    [fileAACHandle closeFile];
+    fileAACHandle = NULL;
 }
 
 -(void) captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection
-
 {
-    NSLog( @"frame captured at ");
-    [h264Encoder encode:sampleBuffer];
+    if(connection == connectionVideo)
+    {
+        NSLog( @"frame captured at ");
+        [h264Encoder encode:sampleBuffer];
+    }
+    else if(connection == connectionAudio)
+    {
+        NSLog( @"audio captured at ");
+        [aacEncoder encodeSampleBuffer:sampleBuffer];
+    }
 }
 
-#pragma mark -  H264HWEncoderDelegate delegare
+#pragma mark -  H264HWEncoderDelegate declare
 
 - (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps
 {
     NSLog(@"gotSpsPps %d %d", (int)[sps length], (int)[pps length]);
-    const char bytes[] = "\x00\x00\x00\x01";
-    size_t length = (sizeof bytes) - 1; //string literals have implicit trailing '\0'
-    NSData *ByteHeader = [NSData dataWithBytes:bytes length:length];
-    [fileH264Handle writeData:ByteHeader];
     [fileH264Handle writeData:sps];
-    [fileH264Handle writeData:ByteHeader];
     [fileH264Handle writeData:pps];
-    
 }
 
 - (void)gotH264EncodedData:(NSData*)data isKeyFrame:(BOOL)isKeyFrame
 {
-    NSLog(@"gotEncodedData %d", (int)[data length]);
+    NSLog(@"gotH264EncodedData %d", (int)[data length]);
     
     if (fileH264Handle != NULL)
     {
-        const char bytes[] = "\x00\x00\x00\x01";
-        size_t length = (sizeof bytes) - 1; //string literals have implicit trailing '\0'
-        NSData *ByteHeader = [NSData dataWithBytes:bytes length:length];
-        
-        [fileH264Handle writeData:ByteHeader];
         [fileH264Handle writeData:data];
+    }
+}
+
+#pragma mark - AACEncoderDelegate declare
+
+- (void)gotAACEncodedData:(NSData*)data error:(NSError*)error
+{
+    NSLog(@"gotAACEncodedData %d", (int)[data length]);
+    
+    if (fileAACHandle != NULL)
+    {
+        [fileAACHandle writeData:data];
     }
 }
 

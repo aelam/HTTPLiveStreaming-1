@@ -20,7 +20,7 @@
 @interface H264HWEncoder : NSObject
 
 - (void) initWithConfiguration;
-- (void) startEncode:(int)width  height:(int)height;
+- (void) startEncode:(int)width  height:(int)height bitrate:(int)bitrate;
 - (void) encode:(CMSampleBufferRef )sampleBuffer;
 - (void) end;
 

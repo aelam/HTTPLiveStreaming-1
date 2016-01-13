@@ -18,6 +18,7 @@
     int  frameCount;
     NSData *sps;
     NSData *pps;
+    int m_bitrate;
 }
 @synthesize error;
 
@@ -28,6 +29,7 @@
     frameCount = 0;
     sps = NULL;
     pps = NULL;
+    m_bitrate = 550;
 }
 
 void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStatus status, VTEncodeInfoFlags infoFlags,
@@ -68,6 +70,19 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
                 // Found pps
                 encoder->sps = [NSData dataWithBytes:sparameterSet length:sparameterSetSize];
                 encoder->pps = [NSData dataWithBytes:pparameterSet length:pparameterSetSize];
+                
+                const char bytes[] = "\x00\x00\x00\x01"; // SPS PPS Header
+                size_t length = (sizeof bytes) - 1; //string literals have implicit trailing '\0'
+                NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
+                NSMutableData *fullSPSData = [NSMutableData dataWithData:byteHeader];
+                NSMutableData *fullPPSData = [NSMutableData dataWithData:byteHeader];
+                
+                [fullSPSData appendData:encoder->sps];
+                [fullPPSData appendData:encoder->pps];
+                
+                encoder->sps = fullSPSData;
+                encoder->pps = fullPPSData;
+                
                 if (encoder->_delegate)
                 {
                     [encoder->_delegate gotSpsPps:encoder->sps pps:encoder->pps];
@@ -94,6 +109,15 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             NALUnitLength = CFSwapInt32BigToHost(NALUnitLength);
             
             NSData* data = [[NSData alloc] initWithBytes:(dataPointer + bufferOffset + AVCCHeaderLength) length:NALUnitLength];
+            
+            const char bytes[] = "\x00\x00\x00\x01"; // AVC Header
+            size_t length = (sizeof bytes) - 1; //string literals have implicit trailing '\0'
+            NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
+            NSMutableData *fullAVCData = [NSMutableData dataWithData:byteHeader];
+            
+            [fullAVCData appendData:data];
+            data = fullAVCData;
+            
             [encoder->_delegate gotH264EncodedData:data isKeyFrame:keyframe];
             
             // Move to the next NAL unit in the block buffer
@@ -102,7 +126,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     }
 }
 
-- (void) startEncode:(int)width  height:(int)height
+- (void) startEncode:(int)width  height:(int)height bitrate:(int)bitrate
 {
     dispatch_sync(aQueue, ^{
         // For testing out the logic, lets read from a file and then send it to encoder to create h264 stream
@@ -122,6 +146,42 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         // Set the properties
         VTSessionSetProperty(EncodingSession, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
         VTSessionSetProperty(EncodingSession, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_Main_AutoLevel);
+        
+        // Set the bitrate properties
+        int v = m_bitrate;
+        CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
+        OSStatus ret = VTSessionSetProperty((VTCompressionSessionRef)EncodingSession, kVTCompressionPropertyKey_AverageBitRate, ref);
+        
+        if(ret != noErr) {
+            NSLog(@"H264Encode::setBitrate Error setting bitrate! %d", (int) ret);
+        }
+        CFRelease(ref);
+        ret = VTSessionCopyProperty((VTCompressionSessionRef)EncodingSession, kVTCompressionPropertyKey_AverageBitRate, kCFAllocatorDefault, &ref);
+        
+        if(ret == noErr && ref) {
+            SInt32 br = 0;
+            
+            CFNumberGetValue(ref, kCFNumberSInt32Type, &br);
+            
+            m_bitrate = br;
+            CFRelease(ref);
+        } else {
+            m_bitrate = v;
+        }
+        v = bitrate / 8;
+        CFNumberRef bytes = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
+        v = 1;
+        CFNumberRef duration = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
+        
+        CFMutableArrayRef limit = CFArrayCreateMutable(kCFAllocatorDefault, 2, &kCFTypeArrayCallBacks);
+        
+        CFArrayAppendValue(limit, bytes);
+        CFArrayAppendValue(limit, duration);
+        
+        VTSessionSetProperty((VTCompressionSessionRef)EncodingSession, kVTCompressionPropertyKey_DataRateLimits, limit);
+        CFRelease(bytes);
+        CFRelease(duration);
+        CFRelease(limit);
         
         // Tell the encoder to start encoding
         VTCompressionSessionPrepareToEncodeFrames(EncodingSession);
