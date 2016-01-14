@@ -26,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A87435C01C46219B0010D438 /* mpeg2ts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mpeg2ts.h; sourceTree = "<group>"; };
+		A87435C21C46219B0010D438 /* mpeg2ts.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mpeg2ts.m; sourceTree = "<group>"; };
 		A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPLiveStreaming.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BCAEFE1C3B49CB000229C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A8BCAF001C3B49CB000229C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -67,6 +69,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A87435BF1C46219B0010D438 /* mpeg2ts */ = {
+			isa = PBXGroup;
+			children = (
+				A87435C01C46219B0010D438 /* mpeg2ts.h */,
+				A87435C21C46219B0010D438 /* mpeg2ts.m */,
+			);
+			path = mpeg2ts;
+			sourceTree = "<group>";
+		};
 		A8BCAEF11C3B49CB000229C3 = {
 			isa = PBXGroup;
 			children = (
@@ -74,6 +85,7 @@
 				A8BCAF1D1C3B4D8F000229C3 /* AVFoundation.framework */,
 				A8BCAF171C3B4C1F000229C3 /* VideoToolbox.framework */,
 				A8BCAEFC1C3B49CB000229C3 /* HTTPLiveStreaming */,
+				A87435BF1C46219B0010D438 /* mpeg2ts */,
 				A8BCAEFB1C3B49CB000229C3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -333,7 +345,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = HTTPLiveStreaming/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.metapleasure.HTTPLiveStreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -348,7 +360,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = HTTPLiveStreaming/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.metapleasure.HTTPLiveStreaming;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -9,9 +9,19 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>mpeg2ts.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>A87435BD1C46219B0010D438</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>A8BCAEF91C3B49CB000229C3</key>
 		<dict>
 			<key>primary</key>
