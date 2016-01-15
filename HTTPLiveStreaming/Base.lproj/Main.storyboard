@@ -65,7 +65,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="StartStopButton" destination="nOx-y9-p5Q" id="pkq-TE-U3G"/>
+                        <outlet property="StartStopButton" destination="nOx-y9-p5Q" id="8vM-dM-KnB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c37-ou-iJb" userLabel="First Responder" sceneMemberID="firstResponder"/>

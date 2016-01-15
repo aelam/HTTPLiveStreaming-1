@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A845EE341C48B565004E0F13 /* libLive555.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A845EE331C48A700004E0F13 /* libLive555.a */; };
+		A874364D1C476C330010D438 /* MPEG2TSWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A874364B1C476C330010D438 /* MPEG2TSWriter.mm */; };
 		A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAEFE1C3B49CB000229C3 /* main.m */; };
 		A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF011C3B49CB000229C3 /* AppDelegate.m */; };
 		A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF041C3B49CB000229C3 /* AAPLPlayerViewController.m */; };
@@ -25,9 +27,20 @@
 		A8BCAF4B1C3F57C3000229C3 /* AACEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF4A1C3F57C3000229C3 /* AACEncoder.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A845EE321C48A700004E0F13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A845EE2E1C48A700004E0F13 /* Live555.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DBE19F1B14ABB5CC000A8D99;
+			remoteInfo = Live555;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		A87435C01C46219B0010D438 /* mpeg2ts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mpeg2ts.h; sourceTree = "<group>"; };
-		A87435C21C46219B0010D438 /* mpeg2ts.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mpeg2ts.m; sourceTree = "<group>"; };
+		A845EE2E1C48A700004E0F13 /* Live555.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Live555.xcodeproj; path = Live555/Live555/Live555.xcodeproj; sourceTree = "<group>"; };
+		A874364B1C476C330010D438 /* MPEG2TSWriter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MPEG2TSWriter.mm; sourceTree = "<group>"; };
+		A874364C1C476C330010D438 /* MPEG2TSWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPEG2TSWriter.h; sourceTree = "<group>"; };
 		A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPLiveStreaming.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BCAEFE1C3B49CB000229C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A8BCAF001C3B49CB000229C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -60,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A845EE341C48B565004E0F13 /* libLive555.a in Frameworks */,
 				A8BCAF3D1C3E4EB9000229C3 /* AudioToolbox.framework in Frameworks */,
 				A8BCAF1E1C3B4D8F000229C3 /* AVFoundation.framework in Frameworks */,
 				A8BCAF181C3B4C1F000229C3 /* VideoToolbox.framework in Frameworks */,
@@ -69,23 +83,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A87435BF1C46219B0010D438 /* mpeg2ts */ = {
+		A845EE2F1C48A700004E0F13 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A87435C01C46219B0010D438 /* mpeg2ts.h */,
-				A87435C21C46219B0010D438 /* mpeg2ts.m */,
+				A845EE331C48A700004E0F13 /* libLive555.a */,
 			);
-			path = mpeg2ts;
+			name = Products;
 			sourceTree = "<group>";
 		};
 		A8BCAEF11C3B49CB000229C3 = {
 			isa = PBXGroup;
 			children = (
+				A845EE2E1C48A700004E0F13 /* Live555.xcodeproj */,
 				A8BCAF3C1C3E4EB9000229C3 /* AudioToolbox.framework */,
 				A8BCAF1D1C3B4D8F000229C3 /* AVFoundation.framework */,
 				A8BCAF171C3B4C1F000229C3 /* VideoToolbox.framework */,
 				A8BCAEFC1C3B49CB000229C3 /* HTTPLiveStreaming */,
-				A87435BF1C46219B0010D438 /* mpeg2ts */,
 				A8BCAEFB1C3B49CB000229C3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,6 +126,8 @@
 				A8BCAF371C3E03AE000229C3 /* H264HWEncoder.m */,
 				A8BCAF491C3F57C3000229C3 /* AACEncoder.h */,
 				A8BCAF4A1C3F57C3000229C3 /* AACEncoder.m */,
+				A874364C1C476C330010D438 /* MPEG2TSWriter.h */,
+				A874364B1C476C330010D438 /* MPEG2TSWriter.mm */,
 				A8BCAF391C3E05D0000229C3 /* CameraViewController.h */,
 				A8BCAF3A1C3E05D0000229C3 /* CameraViewController.m */,
 				A8BCAF061C3B49CB000229C3 /* Main.storyboard */,
@@ -180,12 +195,28 @@
 			mainGroup = A8BCAEF11C3B49CB000229C3;
 			productRefGroup = A8BCAEFB1C3B49CB000229C3 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A845EE2F1C48A700004E0F13 /* Products */;
+					ProjectRef = A845EE2E1C48A700004E0F13 /* Live555.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				A8BCAEF91C3B49CB000229C3 /* HTTPLiveStreaming */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		A845EE331C48A700004E0F13 /* libLive555.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libLive555.a;
+			remoteRef = A845EE321C48A700004E0F13 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A8BCAEF81C3B49CB000229C3 /* Resources */ = {
@@ -209,6 +240,7 @@
 			files = (
 				A8BCAF351C3E02D1000229C3 /* H264HWDecoder.m in Sources */,
 				A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */,
+				A874364D1C476C330010D438 /* MPEG2TSWriter.mm in Sources */,
 				A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */,
 				A8BCAF381C3E03AE000229C3 /* H264HWEncoder.m in Sources */,
 				A8BCAF4B1C3F57C3000229C3 /* AACEncoder.m in Sources */,

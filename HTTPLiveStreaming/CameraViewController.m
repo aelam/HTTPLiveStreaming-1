@@ -7,6 +7,7 @@
 //
 
 #import "CameraViewController.h"
+#include "MPEG2TSWriter.h"
 
 @interface CameraViewController ()
 {
@@ -21,6 +22,7 @@
     NSFileHandle *fileAACHandle;
     AVCaptureConnection* connectionVideo;
     AVCaptureConnection* connectionAudio;
+    MPEG2TSWriter *tsWriter;
 }
 @property (weak, nonatomic) IBOutlet UIButton *StartStopButton;
 @end
@@ -39,6 +41,8 @@
     aacEncoder.delegate = self;
     
     startCalled = true;
+    
+    tsWriter = [MPEG2TSWriter sharedInstance];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -161,6 +165,8 @@
     fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
     
     [h264Encoder startEncode:480 height:640 bitrate:550];
+    
+    NSString *addr = @"rtp://192.168.0.117:1935/mpegts";
 }
 
 - (void)statusBarOrientationDidChange:(NSNotification*)notification {
@@ -218,18 +224,18 @@
 - (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps
 {
     NSLog(@"gotSpsPps %d %d", (int)[sps length], (int)[pps length]);
-    [fileH264Handle writeData:sps];
-    [fileH264Handle writeData:pps];
+//    [fileH264Handle writeData:sps];
+//    [fileH264Handle writeData:pps];
 }
 
 - (void)gotH264EncodedData:(NSData*)data isKeyFrame:(BOOL)isKeyFrame
 {
     NSLog(@"gotH264EncodedData %d", (int)[data length]);
     
-    if (fileH264Handle != NULL)
-    {
-        [fileH264Handle writeData:data];
-    }
+//    if (fileH264Handle != NULL)
+//    {
+//        [fileH264Handle writeData:data];
+//    }
 }
 
 #pragma mark - AACEncoderDelegate declare
@@ -238,10 +244,10 @@
 {
     NSLog(@"gotAACEncodedData %d", (int)[data length]);
     
-    if (fileAACHandle != NULL)
-    {
-        [fileAACHandle writeData:data];
-    }
+//    if (fileAACHandle != NULL)
+//    {
+//        [fileAACHandle writeData:data];
+//    }
 }
 
 @end
