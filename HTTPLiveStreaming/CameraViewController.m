@@ -7,7 +7,7 @@
 //
 
 #import "CameraViewController.h"
-#include "MPEG2TSWriter.h"
+#include "RTPClient.h"
 
 @interface CameraViewController ()
 {
@@ -17,12 +17,12 @@
     bool startCalled;
     AVCaptureVideoPreviewLayer *previewLayer;
     NSString *h264File;
-    NSString *aacFile;
-    NSFileHandle *fileH264Handle;
-    NSFileHandle *fileAACHandle;
+//    NSString *aacFile;
+//    NSFileHandle *fileH264Handle;
+//    NSFileHandle *fileAACHandle;
     AVCaptureConnection* connectionVideo;
     AVCaptureConnection* connectionAudio;
-    MPEG2TSWriter *tsWriter;
+    RTPClient *rtsp;
 }
 @property (weak, nonatomic) IBOutlet UIButton *StartStopButton;
 @end
@@ -42,7 +42,7 @@
     
     startCalled = true;
     
-    tsWriter = [MPEG2TSWriter sharedInstance];
+    rtsp = [[RTPClient alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -144,29 +144,29 @@
     
     [captureSession startRunning];
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    
-    // Drop file to raw 264 track
-    h264File = [documentsDirectory stringByAppendingPathComponent:@"test.h264"];
-    [fileManager removeItemAtPath:h264File error:nil];
-    [fileManager createFileAtPath:h264File contents:nil attributes:nil];
-    
-    // Open the file using POSIX as this is anyway a test application
-    fileH264Handle = [NSFileHandle fileHandleForWritingAtPath:h264File];
-    
-    // Drop file to raw aac track
-    aacFile = [documentsDirectory stringByAppendingPathComponent:@"test.aac"];
-    [fileManager removeItemAtPath:aacFile error:nil];
-    [fileManager createFileAtPath:aacFile contents:nil attributes:nil];
-    
-    // Open the file using POSIX as this is anyway a test application
-    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
+//    NSFileManager *fileManager = [NSFileManager defaultManager];
+//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//    NSString *documentsDirectory = [paths objectAtIndex:0];
+//    
+//    // Drop file to raw 264 track
+//    h264File = [documentsDirectory stringByAppendingPathComponent:@"test.ts"];
+//    [fileManager removeItemAtPath:h264File error:nil];
+//    [fileManager createFileAtPath:h264File contents:nil attributes:nil];
+//    
+//    // Open the file using POSIX as this is anyway a test application
+//    fileH264Handle = [NSFileHandle fileHandleForWritingAtPath:h264File];
+//    
+//    // Drop file to raw aac track
+//    aacFile = [documentsDirectory stringByAppendingPathComponent:@"test.aac"];
+//    [fileManager removeItemAtPath:aacFile error:nil];
+//    [fileManager createFileAtPath:aacFile contents:nil attributes:nil];
+//    
+//    // Open the file using POSIX as this is anyway a test application
+//    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
     
     [h264Encoder startEncode:480 height:640 bitrate:550];
     
-    NSString *addr = @"rtp://192.168.0.117:1935/mpegts";
+    [rtsp connect:@"192.168.0.117" port:1935 stream:@"mpegts"];
 }
 
 - (void)statusBarOrientationDidChange:(NSNotification*)notification {
@@ -199,22 +199,23 @@
 {
     [captureSession stopRunning];
     [previewLayer removeFromSuperlayer];
-    [fileH264Handle closeFile];
-    fileH264Handle = NULL;
-    [fileAACHandle closeFile];
-    fileAACHandle = NULL;
+    [rtsp close];
+//    [fileH264Handle closeFile];
+//    fileH264Handle = NULL;
+//    [fileAACHandle closeFile];
+//    fileAACHandle = NULL;
 }
 
 -(void) captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection
 {
     if(connection == connectionVideo)
     {
-        NSLog( @"frame captured at ");
+//        NSLog( @"frame captured at ");
         [h264Encoder encode:sampleBuffer];
     }
     else if(connection == connectionAudio)
     {
-        NSLog( @"audio captured at ");
+//        NSLog( @"audio captured at ");
         [aacEncoder encodeSampleBuffer:sampleBuffer];
     }
 }
@@ -223,31 +224,39 @@
 
 - (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps
 {
-    NSLog(@"gotSpsPps %d %d", (int)[sps length], (int)[pps length]);
+//    NSLog(@"gotSpsPps %d %d", (int)[sps length], (int)[pps length]);
 //    [fileH264Handle writeData:sps];
 //    [fileH264Handle writeData:pps];
+    NSMutableData *data = [NSMutableData dataWithData:sps];
+    [data appendData:pps];
+    
+    [rtsp publish:data];
 }
 
 - (void)gotH264EncodedData:(NSData*)data isKeyFrame:(BOOL)isKeyFrame
 {
-    NSLog(@"gotH264EncodedData %d", (int)[data length]);
+//    NSLog(@"gotH264EncodedData %d", (int)[data length]);
     
 //    if (fileH264Handle != NULL)
 //    {
 //        [fileH264Handle writeData:data];
 //    }
+    
+    [rtsp publish:data];
 }
 
 #pragma mark - AACEncoderDelegate declare
 
 - (void)gotAACEncodedData:(NSData*)data error:(NSError*)error
 {
-    NSLog(@"gotAACEncodedData %d", (int)[data length]);
+//    NSLog(@"gotAACEncodedData %d", (int)[data length]);
     
 //    if (fileAACHandle != NULL)
 //    {
 //        [fileAACHandle writeData:data];
 //    }
+    
+    [rtsp publish:data];
 }
 
 @end

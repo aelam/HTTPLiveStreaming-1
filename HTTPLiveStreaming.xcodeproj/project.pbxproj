@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A845EE341C48B565004E0F13 /* libLive555.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A845EE331C48A700004E0F13 /* libLive555.a */; };
-		A874364D1C476C330010D438 /* MPEG2TSWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A874364B1C476C330010D438 /* MPEG2TSWriter.mm */; };
+		A845EE5E1C4C7C03004E0F13 /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A845EE591C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */; };
+		A845EE5F1C4C7C03004E0F13 /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A845EE591C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A874364D1C476C330010D438 /* RTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A874364B1C476C330010D438 /* RTPClient.m */; };
 		A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAEFE1C3B49CB000229C3 /* main.m */; };
 		A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF011C3B49CB000229C3 /* AppDelegate.m */; };
 		A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF041C3B49CB000229C3 /* AAPLPlayerViewController.m */; };
@@ -28,19 +29,54 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		A845EE321C48A700004E0F13 /* PBXContainerItemProxy */ = {
+		A845EE581C4C7BF5004E0F13 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A845EE2E1C48A700004E0F13 /* Live555.xcodeproj */;
+			containerPortal = A845EE521C4C7BF5004E0F13 /* CocoaAsyncSocket.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = DBE19F1B14ABB5CC000A8D99;
-			remoteInfo = Live555;
+			remoteGlobalIDString = 6CD990101B77868C0011A685;
+			remoteInfo = "iOS CocoaAsyncSocket";
+		};
+		A845EE5A1C4C7BF5004E0F13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A845EE521C4C7BF5004E0F13 /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9FC41F131B9D965000578BEB;
+			remoteInfo = "Mac CocoaAsyncSocket";
+		};
+		A845EE5C1C4C7BF5004E0F13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A845EE521C4C7BF5004E0F13 /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7D8B70C41BCFA15700D8E273;
+			remoteInfo = "tvOS CocoaAsyncSocket";
+		};
+		A845EE601C4C7C03004E0F13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A845EE521C4C7BF5004E0F13 /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6CD9900F1B77868C0011A685;
+			remoteInfo = "iOS CocoaAsyncSocket";
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A845EE511C48DD0F004E0F13 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A845EE5F1C4C7C03004E0F13 /* CocoaAsyncSocket.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		A845EE2E1C48A700004E0F13 /* Live555.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Live555.xcodeproj; path = Live555/Live555/Live555.xcodeproj; sourceTree = "<group>"; };
-		A874364B1C476C330010D438 /* MPEG2TSWriter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MPEG2TSWriter.mm; sourceTree = "<group>"; };
-		A874364C1C476C330010D438 /* MPEG2TSWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPEG2TSWriter.h; sourceTree = "<group>"; };
+		A845EE521C4C7BF5004E0F13 /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
+		A874364B1C476C330010D438 /* RTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTPClient.m; sourceTree = "<group>"; };
+		A874364C1C476C330010D438 /* RTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTPClient.h; sourceTree = "<group>"; };
 		A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPLiveStreaming.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BCAEFE1C3B49CB000229C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A8BCAF001C3B49CB000229C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -73,9 +109,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A845EE341C48B565004E0F13 /* libLive555.a in Frameworks */,
 				A8BCAF3D1C3E4EB9000229C3 /* AudioToolbox.framework in Frameworks */,
 				A8BCAF1E1C3B4D8F000229C3 /* AVFoundation.framework in Frameworks */,
+				A845EE5E1C4C7C03004E0F13 /* CocoaAsyncSocket.framework in Frameworks */,
 				A8BCAF181C3B4C1F000229C3 /* VideoToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -83,10 +119,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A845EE2F1C48A700004E0F13 /* Products */ = {
+		A845EE531C4C7BF5004E0F13 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A845EE331C48A700004E0F13 /* libLive555.a */,
+				A845EE591C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */,
+				A845EE5B1C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */,
+				A845EE5D1C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,7 +132,7 @@
 		A8BCAEF11C3B49CB000229C3 = {
 			isa = PBXGroup;
 			children = (
-				A845EE2E1C48A700004E0F13 /* Live555.xcodeproj */,
+				A845EE521C4C7BF5004E0F13 /* CocoaAsyncSocket.xcodeproj */,
 				A8BCAF3C1C3E4EB9000229C3 /* AudioToolbox.framework */,
 				A8BCAF1D1C3B4D8F000229C3 /* AVFoundation.framework */,
 				A8BCAF171C3B4C1F000229C3 /* VideoToolbox.framework */,
@@ -126,8 +164,8 @@
 				A8BCAF371C3E03AE000229C3 /* H264HWEncoder.m */,
 				A8BCAF491C3F57C3000229C3 /* AACEncoder.h */,
 				A8BCAF4A1C3F57C3000229C3 /* AACEncoder.m */,
-				A874364C1C476C330010D438 /* MPEG2TSWriter.h */,
-				A874364B1C476C330010D438 /* MPEG2TSWriter.mm */,
+				A874364C1C476C330010D438 /* RTPClient.h */,
+				A874364B1C476C330010D438 /* RTPClient.m */,
 				A8BCAF391C3E05D0000229C3 /* CameraViewController.h */,
 				A8BCAF3A1C3E05D0000229C3 /* CameraViewController.m */,
 				A8BCAF061C3B49CB000229C3 /* Main.storyboard */,
@@ -159,10 +197,12 @@
 				A8BCAEF61C3B49CB000229C3 /* Sources */,
 				A8BCAEF71C3B49CB000229C3 /* Frameworks */,
 				A8BCAEF81C3B49CB000229C3 /* Resources */,
+				A845EE511C48DD0F004E0F13 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A845EE611C4C7C03004E0F13 /* PBXTargetDependency */,
 			);
 			name = HTTPLiveStreaming;
 			productName = HTTPLiveStreaming;
@@ -197,8 +237,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = A845EE2F1C48A700004E0F13 /* Products */;
-					ProjectRef = A845EE2E1C48A700004E0F13 /* Live555.xcodeproj */;
+					ProductGroup = A845EE531C4C7BF5004E0F13 /* Products */;
+					ProjectRef = A845EE521C4C7BF5004E0F13 /* CocoaAsyncSocket.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -209,11 +249,25 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A845EE331C48A700004E0F13 /* libLive555.a */ = {
+		A845EE591C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */ = {
 			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libLive555.a;
-			remoteRef = A845EE321C48A700004E0F13 /* PBXContainerItemProxy */;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = A845EE581C4C7BF5004E0F13 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A845EE5B1C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = A845EE5A1C4C7BF5004E0F13 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A845EE5D1C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaAsyncSocket.framework;
+			remoteRef = A845EE5C1C4C7BF5004E0F13 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -240,7 +294,7 @@
 			files = (
 				A8BCAF351C3E02D1000229C3 /* H264HWDecoder.m in Sources */,
 				A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */,
-				A874364D1C476C330010D438 /* MPEG2TSWriter.mm in Sources */,
+				A874364D1C476C330010D438 /* RTPClient.m in Sources */,
 				A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */,
 				A8BCAF381C3E03AE000229C3 /* H264HWEncoder.m in Sources */,
 				A8BCAF4B1C3F57C3000229C3 /* AACEncoder.m in Sources */,
@@ -251,6 +305,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A845EE611C4C7C03004E0F13 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "iOS CocoaAsyncSocket";
+			targetProxy = A845EE601C4C7C03004E0F13 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		A8BCAF061C3B49CB000229C3 /* Main.storyboard */ = {

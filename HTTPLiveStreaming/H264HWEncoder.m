@@ -35,12 +35,12 @@
 void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStatus status, VTEncodeInfoFlags infoFlags,
                      CMSampleBufferRef sampleBuffer )
 {
-    NSLog(@"didCompressH264 called with status %d infoFlags %d", (int)status, (int)infoFlags);
+//    NSLog(@"didCompressH264 called with status %d infoFlags %d", (int)status, (int)infoFlags);
     if (status != 0) return;
     
     if (!CMSampleBufferDataIsReady(sampleBuffer))
     {
-        NSLog(@"didCompressH264 data is not ready ");
+//        NSLog(@"didCompressH264 data is not ready ");
         return;
     }
     H264HWEncoder* encoder = (__bridge H264HWEncoder*)outputCallbackRefCon;
@@ -133,11 +133,11 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         
         // Create the compression session
         OSStatus status = VTCompressionSessionCreate(NULL, width, height, kCMVideoCodecType_H264, NULL, NULL, NULL, didCompressH264, (__bridge void *)(self),  &EncodingSession);
-        NSLog(@"H264: VTCompressionSessionCreate %d", (int)status);
+//        NSLog(@"H264: VTCompressionSessionCreate %d", (int)status);
         
         if (status != 0)
         {
-            NSLog(@"H264: Unable to create a H264 session");
+//            NSLog(@"H264: Unable to create a H264 session");
             error = @"H264: Unable to create a H264 session";
             
             return ;
@@ -153,7 +153,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         OSStatus ret = VTSessionSetProperty((VTCompressionSessionRef)EncodingSession, kVTCompressionPropertyKey_AverageBitRate, ref);
         
         if(ret != noErr) {
-            NSLog(@"H264Encode::setBitrate Error setting bitrate! %d", (int) ret);
+//            NSLog(@"H264Encode::setBitrate Error setting bitrate! %d", (int) ret);
         }
         CFRelease(ref);
         ret = VTSessionCopyProperty((VTCompressionSessionRef)EncodingSession, kVTCompressionPropertyKey_AverageBitRate, kCFAllocatorDefault, &ref);
@@ -208,7 +208,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
                                                               NULL, NULL, &flags);
         // Check for error
         if (statusCode != noErr) {
-            NSLog(@"H264: VTCompressionSessionEncodeFrame failed with %d", (int)statusCode);
+//            NSLog(@"H264: VTCompressionSessionEncodeFrame failed with %d", (int)statusCode);
             error = @"H264: VTCompressionSessionEncodeFrame failed ";
             
             // End the session
@@ -218,7 +218,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             error = NULL;
             return;
         }
-        NSLog(@"H264: VTCompressionSessionEncodeFrame Success");
+//        NSLog(@"H264: VTCompressionSessionEncodeFrame Success");
     });
 }
 

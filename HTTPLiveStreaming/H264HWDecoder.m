@@ -85,13 +85,13 @@ NSString * const naluTypesStrings[] =
     CMBlockBufferRef blockBuffer = NULL;
     
     int nalu_type = (frame[startCodeIndex + 4] & 0x1F);
-    NSLog(@"~~~~~~~ Received NALU Type \"%@\" ~~~~~~~~", naluTypesStrings[nalu_type]);
+//    NSLog(@"~~~~~~~ Received NALU Type \"%@\" ~~~~~~~~", naluTypesStrings[nalu_type]);
     
     // if we havent already set up our format description with our SPS PPS parameters, we
     // can't process any frames except type 7 that has our parameters
     if (nalu_type != 7 && _formatDesc == NULL)
     {
-        NSLog(@"Video error: Frame is not an I Frame and format description is null");
+//        NSLog(@"Video error: Frame is not an I Frame and format description is null");
         return;
     }
     
@@ -112,7 +112,7 @@ NSString * const naluTypesStrings[] =
         
         // find what the second NALU type is
         nalu_type = (frame[secondStartCodeIndex + 4] & 0x1F);
-        NSLog(@"~~~~~~~ Received NALU Type \"%@\" ~~~~~~~~", naluTypesStrings[nalu_type]);
+//        NSLog(@"~~~~~~~ Received NALU Type \"%@\" ~~~~~~~~", naluTypesStrings[nalu_type]);
     }
     
     // type 8 is the PPS parameter NALU
@@ -147,8 +147,8 @@ NSString * const naluTypesStrings[] =
                                                                      parameterSetSizes, 4,
                                                                      &_formatDesc);
         
-        NSLog(@"\t\t Creation of CMVideoFormatDescription: %@", (status == noErr) ? @"successful!" : @"failed...");
-        if(status != noErr) NSLog(@"\t\t Format Description ERROR type: %d", (int)status);
+//        NSLog(@"\t\t Creation of CMVideoFormatDescription: %@", (status == noErr) ? @"successful!" : @"failed...");
+//        if(status != noErr) NSLog(@"\t\t Format Description ERROR type: %d", (int)status);
         
         // See if decomp session can convert from previous format description
         // to the new one, if not we need to remake the decomp session.
@@ -162,7 +162,7 @@ NSString * const naluTypesStrings[] =
         // now lets handle the IDR frame that (should) come after the parameter sets
         // I say "should" because that's how I expect my H264 stream to work, YMMV
         nalu_type = (frame[thirdStartCodeIndex + 4] & 0x1F);
-        NSLog(@"~~~~~~~ Received NALU Type \"%@\" ~~~~~~~~", naluTypesStrings[nalu_type]);
+//        NSLog(@"~~~~~~~ Received NALU Type \"%@\" ~~~~~~~~", naluTypesStrings[nalu_type]);
     }
     
     // create our VTDecompressionSession.  This isnt neccessary if you choose to use AVSampleBufferDisplayLayer
@@ -194,7 +194,7 @@ NSString * const naluTypesStrings[] =
                                                     blockLength,   // dataLength of relevant bytes, starting at offsetToData
                                                     0, &blockBuffer);
         
-        NSLog(@"\t\t BlockBufferCreation: \t %@", (status == kCMBlockBufferNoErr) ? @"successful!" : @"failed...");
+//        NSLog(@"\t\t BlockBufferCreation: \t %@", (status == kCMBlockBufferNoErr) ? @"successful!" : @"failed...");
     }
     
     // NALU type 1 is non-IDR (or PFrame) picture
@@ -217,7 +217,7 @@ NSString * const naluTypesStrings[] =
                                                     blockLength,  // dataLength of relevant data bytes, starting at offsetToData
                                                     0, &blockBuffer);
         
-        NSLog(@"\t\t BlockBufferCreation: \t %@", (status == kCMBlockBufferNoErr) ? @"successful!" : @"failed...");
+//        NSLog(@"\t\t BlockBufferCreation: \t %@", (status == kCMBlockBufferNoErr) ? @"successful!" : @"failed...");
     }
     
     // now create our sample buffer from the block buffer,
@@ -230,7 +230,7 @@ NSString * const naluTypesStrings[] =
                                       _formatDesc, 1, 0, NULL, 1,
                                       &sampleSize, &sampleBuffer);
         
-        NSLog(@"\t\t SampleBufferCreate: \t %@", (status == noErr) ? @"successful!" : @"failed...");
+//        NSLog(@"\t\t SampleBufferCreate: \t %@", (status == noErr) ? @"successful!" : @"failed...");
     }
     
     if(status == noErr)
@@ -272,7 +272,7 @@ NSString * const naluTypesStrings[] =
     OSStatus status =  VTDecompressionSessionCreate(NULL, _formatDesc, NULL,
                                                     NULL, // (__bridge CFDictionaryRef)(destinationImageBufferAttributes)
                                                     &callBackRecord, &_decompressionSession);
-    NSLog(@"Video Decompression Session Create: \t %@", (status == noErr) ? @"successful!" : @"failed...");
+//    NSLog(@"Video Decompression Session Create: \t %@", (status == noErr) ? @"successful!" : @"failed...");
     if(status != noErr) NSLog(@"\t\t VTD ERROR type: %d", (int)status);
 }
 
@@ -289,11 +289,11 @@ void decompressionSessionDecodeFrameCallback(void *decompressionOutputRefCon,
     if (status != noErr)
     {
         NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
-        NSLog(@"Decompressed error: %@", error);
+//        NSLog(@"Decompressed error: %@", error);
     }
     else
     {
-        NSLog(@"Decompressed sucessfully");
+//        NSLog(@"Decompressed sucessfully");
         
         // do something with your resulting CVImageBufferRef that is your decompressed frame
         if(streamManager.delegate != nil)
