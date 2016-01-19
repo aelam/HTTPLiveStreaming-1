@@ -166,7 +166,7 @@
     
     [h264Encoder startEncode:480 height:640 bitrate:550];
     
-    [rtsp connect:@"192.168.0.117" port:1935 stream:@"mpegts"];
+    [rtsp connect:@"192.168.0.144" port:1935 stream:@"mpegts"];
 }
 
 - (void)statusBarOrientationDidChange:(NSNotification*)notification {

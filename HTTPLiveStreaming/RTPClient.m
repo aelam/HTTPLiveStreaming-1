@@ -13,12 +13,9 @@
 
 typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     SEQ_IDLE = -1,
-    SEQ_OPTIONS,
-    SEQ_DESCRIBE,
-    SEQ_SETUP,
-    SEQ_PLAY,
-    SEQ_RECORD,
     SEQ_ANNOUNCE,
+    SEQ_SETUP,
+    SEQ_RECORD,
     SEQ_TEARDOWN
 };
 
@@ -32,7 +29,6 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     NSMutableData *readBuffer;
 }
 
-- (void)sendOPTIONS;
 - (void)sendMessage:(NSData *)data tag:(long)tag;
 - (void)messageReceived:(NSData *)message tag:(long)tag;
 
@@ -50,6 +46,10 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
         dispatch_queue_t mainQueue = dispatch_get_main_queue();
         socket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:mainQueue];
         rtspSeq = SEQ_IDLE;
+        self.sessionid = nil;
+        self.address = nil;
+        self.port = 0;
+        self.streamName = nil;
     }
     return self;
 }
@@ -67,6 +67,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     self.port = port;
     self.streamName = stream;
     
+    self.sessionid = nil;
     readBuffer = nil;
     readBuffer = [[NSMutableData alloc] init];
     
@@ -82,45 +83,118 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 {
     rtspSeq = SEQ_IDLE;
     [socket disconnect];
+    readBuffer = nil;
+    self.sessionid = nil;
+    self.address = nil;
+    self.port = 0;
+    self.streamName = nil;
 }
 
 #pragma mark - RTSP Handshake
 
-- (void)sendOPTIONS
+- (void)sendANNOUNCE
 {
-    NSString* rtpHeader = [NSString stringWithFormat:@"OPTIONS %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@", self.address, self.port, self.streamName]];
+    NSString* rtpHeader = [NSString stringWithFormat:@"ANNOUNCE %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/live/mp4:%@", self.address, self.port, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Require: implicit-play\r\nProxy-Require: gzipped-messages\r\n\r\n"];
+    if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Type: application/sdp\r\nContent-Length: 0\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
     NSLog(@"%@", rtpHeader);
-    [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_OPTIONS];
-}
-
-- (void)sendDESCRIBE
-{
-    NSString* rtpHeader = [NSString stringWithFormat:@"DESCRIBE %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@", self.address, self.port, self.streamName]];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n\r\n",cseq++];
-    NSLog(@"%@", rtpHeader);
-    [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_DESCRIBE];
+    rtspSeq = SEQ_ANNOUNCE;
+    [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_ANNOUNCE];
 }
 
 - (void)sendSETUP
 {
-    NSString* rtpHeader = [NSString stringWithFormat:@"SETUP %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@", self.address, self.port, self.streamName]];
+    NSString* rtpHeader = [NSString stringWithFormat:@"SETUP %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/live/mp4:%@", self.address, self.port, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP;unicast;client_port=10000\r\n\r\n"];
+    if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP;unicast;client_port=10000\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
     NSLog(@"%@", rtpHeader);
+    rtspSeq = SEQ_SETUP;
     [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_SETUP];
+}
+
+- (void)sendRECORD
+{
+    NSString* rtpHeader = [NSString stringWithFormat:@"RECORD %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/live/mp4:%@", self.address, self.port, self.streamName]];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
+    if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP;unicast;client_port=10000\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
+    NSLog(@"%@", rtpHeader);
+    rtspSeq = SEQ_RECORD;
+    [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_RECORD];
 }
 
 - (void)sendTEARDOWN
 {
-    NSString* rtpHeader = [NSString stringWithFormat:@"TEARDOWN %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@", self.address, self.port, self.streamName]];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n\r\n",cseq++];
+    NSString* rtpHeader = [NSString stringWithFormat:@"TEARDOWN %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/live/mp4:%@", self.address, self.port, self.streamName]];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
+    if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
     NSLog(@"%@", rtpHeader);
+    rtspSeq = SEQ_TEARDOWN;
     [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_TEARDOWN];
 }
 
 #pragma mark - Handle Message
+
+- (BOOL)checkHasSessionID:(NSString *)string
+{
+    NSError *error   = nil;
+    NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:@"Session:(.+)\r\n"
+                                              options:0
+                                                error:&error];
+    
+    if (error != nil) {
+        NSLog(@"%@", error);
+        return NO;
+    }
+    
+    NSTextCheckingResult *match = [regexp firstMatchInString:string options:0 range:NSMakeRange(0, string.length)];
+    
+    if(match.range.length > 0) return YES;
+    
+    return NO;
+}
+
+- (void)getRTSPSessionID:(NSString *)string
+{
+    if( [self checkHasSessionID:string] )
+    {
+        NSError *error   = nil;
+        NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:@"Session:(.+)\r\n"
+                                                                                options:0
+                                                                                  error:&error];
+        
+        if (error != nil) {
+            NSLog(@"%@", error);
+        } else {
+            NSTextCheckingResult *match = [regexp firstMatchInString:string options:0 range:NSMakeRange(0, string.length)];
+            NSString *substring = [string substringWithRange:[match rangeAtIndex:0]];
+            NSRegularExpression *regexp_sub = [NSRegularExpression regularExpressionWithPattern:@"(?<=:).*?(?=;)|(?=\r\n)" options:0 error:&error];
+            if(error != nil)
+            {
+                NSLog(@"%@", error);
+            }
+            else
+            {
+                NSTextCheckingResult *match_sub = [regexp_sub firstMatchInString:substring options:0 range:NSMakeRange(0, substring.length)];
+                NSString *rawValue = [substring substringWithRange:[match_sub rangeAtIndex:0]];
+                if([[rawValue substringFromIndex:0] isEqualToString:@" "])
+                {
+                    self.sessionid = [rawValue substringFromIndex:1];
+                }
+                else
+                {
+                    self.sessionid = rawValue;
+                }
+            }
+        }
+    }
+}
 
 - (void)sendMessage:(NSData *)data tag:(long)tag
 {
@@ -129,13 +203,8 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)messageReceived:(NSData *)data tag:(long)tag
 {
-    if( tag == SEQ_OPTIONS )
+    if( tag == SEQ_ANNOUNCE )
     {
-        /**
-         * Convert data to a string for logging.
-         *
-         * http://stackoverflow.com/questions/550405/convert-nsdata-bytes-to-nsstring
-         */
         NSString *string = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
         NSLog(@"%@", string);
         [readBuffer appendData:data];
@@ -144,32 +213,8 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             NSString *bufferString = [[NSString alloc] initWithBytes:[readBuffer bytes] length:[readBuffer length] encoding:NSUTF8StringEncoding];
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
-                readBuffer = nil;
-                readBuffer = [[NSMutableData alloc] init];
-                [self sendDESCRIBE];
-            }
-            else
-            {
-                [self close];
-            }
-            readBuffer = nil;
-        }
-    }
-    else if( tag == SEQ_DESCRIBE )
-    {
-        /**
-         * Convert data to a string for logging.
-         *
-         * http://stackoverflow.com/questions/550405/convert-nsdata-bytes-to-nsstring
-         */
-        NSString *string = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
-        NSLog(@"%@", string);
-        [readBuffer appendData:data];
-        if([string isEqual:@"\r\n"])
-        {
-            NSString *bufferString = [[NSString alloc] initWithBytes:[readBuffer bytes] length:[readBuffer length] encoding:NSUTF8StringEncoding];
-            if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
-            {
+                if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
+                
                 readBuffer = nil;
                 readBuffer = [[NSMutableData alloc] init];
                 [self sendSETUP];
@@ -196,9 +241,11 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             NSString *bufferString = [[NSString alloc] initWithBytes:[readBuffer bytes] length:[readBuffer length] encoding:NSUTF8StringEncoding];
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
+                if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
+                
                 readBuffer = nil;
                 readBuffer = [[NSMutableData alloc] init];
-                rtspSeq = SEQ_ANNOUNCE;
+//                [self sendRECORD];
             }
             else
             {
@@ -207,8 +254,13 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             readBuffer = nil;
         }
     }
-    else if( tag == SEQ_ANNOUNCE )
+    else if( tag == SEQ_RECORD )
     {
+        /**
+         * Convert data to a string for logging.
+         *
+         * http://stackoverflow.com/questions/550405/convert-nsdata-bytes-to-nsstring
+         */
         NSString *string = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
         NSLog(@"%@", string);
         [readBuffer appendData:data];
@@ -217,8 +269,15 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             NSString *bufferString = [[NSString alloc] initWithBytes:[readBuffer bytes] length:[readBuffer length] encoding:NSUTF8StringEncoding];
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
+                if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
+                
                 readBuffer = nil;
                 readBuffer = [[NSMutableData alloc] init];
+                //
+            }
+            else
+            {
+                [self close];
             }
             readBuffer = nil;
         }
@@ -238,9 +297,9 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 - (void)socket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port {
     NSLog(@"Connected To %@:%i.", host, port);
     
-    rtspSeq = SEQ_OPTIONS;
+    rtspSeq = SEQ_ANNOUNCE;
     [socket readDataToData:[GCDAsyncSocket CRLFData] withTimeout:-1 tag:rtspSeq];
-    [self sendOPTIONS];
+    [self sendANNOUNCE];
 }
 
 - (void)socket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
@@ -252,16 +311,16 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)publish:(NSData *)data
 {
-    if(socket == nil || !socket.isConnected || rtspSeq != SEQ_ANNOUNCE) return;
-    
-    NSString* rtpHeader = [NSString stringWithFormat:@"ANNOUNCE %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@", self.address, self.port, self.streamName]];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Type: application/sdp\r\nContent-Length: %lu\r\n\r\n", (unsigned long)data.length];
-    
-    NSMutableData *packet = [NSMutableData dataWithData:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding]];
-    [packet appendData:data];
-    
-    [socket writeData:data withTimeout:-1 tag:rtspSeq];
+//    if(socket == nil || !socket.isConnected || rtspSeq != SEQ_ANNOUNCE) return;
+//    
+//    NSString* rtpHeader = [NSString stringWithFormat:@"ANNOUNCE %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/live/mp4:%@", self.address, self.port, self.streamName]];
+//    rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
+//    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Type: application/sdp\r\nContent-Length: %lu\r\n\r\n", (unsigned long)data.length];
+//    
+//    NSMutableData *packet = [NSMutableData dataWithData:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding]];
+//    [packet appendData:data];
+//    
+//    [socket writeData:data withTimeout:-1 tag:SEQ_ANNOUNCE];
 }
 
 @end

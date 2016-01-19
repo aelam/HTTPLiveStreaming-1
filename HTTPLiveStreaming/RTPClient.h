@@ -16,6 +16,7 @@
 @property (weak, nonatomic) NSString *address;
 @property (nonatomic) NSInteger port;
 @property (weak, nonatomic) NSString *streamName;
+@property (weak, nonatomic) NSString *sessionid;
 
 - (void)connect:(NSString *)address port:(NSInteger)port stream:(NSString *)stream;
 - (void)close;
