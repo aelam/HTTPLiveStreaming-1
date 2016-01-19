@@ -12,20 +12,15 @@
 
 @protocol H264HWEncoderDelegate <NSObject>
 
-- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps;
-- (void)gotH264EncodedData:(NSData*)data isKeyFrame:(BOOL)isKeyFrame;
+@required
+- (void)gotH264EncodedData:(NSData*)data;
 
 @end
 
 @interface H264HWEncoder : NSObject
 
-- (void) initWithConfiguration;
-- (void) startEncode:(int)width  height:(int)height bitrate:(int)bitrate;
 - (void) encode:(CMSampleBufferRef )sampleBuffer;
-- (void) end;
 
-
-@property (weak, nonatomic) NSString *error;
 @property (weak, nonatomic) id<H264HWEncoderDelegate> delegate;
 
 @end

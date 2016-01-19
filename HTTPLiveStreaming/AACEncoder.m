@@ -134,8 +134,7 @@ static OSStatus inInputDataProc(AudioConverterRef inAudioConverter, UInt32 *ioNu
     return originalBufferSize;
 }
 
-
-- (void) encodeSampleBuffer:(CMSampleBufferRef)sampleBuffer {
+- (void) encode:(CMSampleBufferRef)sampleBuffer {
     CFRetain(sampleBuffer);
     dispatch_async(_encoderQueue, ^{
         if (!_audioConverter) {

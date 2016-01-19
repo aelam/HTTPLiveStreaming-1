@@ -12,6 +12,7 @@
 
 @protocol AACEncoderDelegate <NSObject>
 
+@required
 - (void)gotAACEncodedData:(NSData*)data error:(NSError*)error;
 
 @end
@@ -23,6 +24,6 @@
 @property (nonatomic) dispatch_queue_t encoderQueue;
 @property (nonatomic) dispatch_queue_t callbackQueue;
 
-- (void) encodeSampleBuffer:(CMSampleBufferRef)sampleBuffer;
+- (void) encode:(CMSampleBufferRef)sampleBuffer;
 
 @end

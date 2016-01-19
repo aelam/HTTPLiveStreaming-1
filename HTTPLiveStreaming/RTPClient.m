@@ -109,23 +109,26 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     NSString* rtpHeader = [NSString stringWithFormat:@"SETUP %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/live/mp4:%@", self.address, self.port, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
     if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP;unicast;client_port=10000\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP/TCP;interleaved=0\r\n"];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
     NSLog(@"%@", rtpHeader);
     rtspSeq = SEQ_SETUP;
     [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_SETUP];
 }
 
-- (void)sendRECORD
+- (void)sendRECORD:(NSData *)data
 {
     NSString* rtpHeader = [NSString stringWithFormat:@"RECORD %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/live/mp4:%@", self.address, self.port, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
     if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP;unicast;client_port=10000\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Range: npt=0.000-\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Type: application/sdp\r\nContent-Length: %lu\r\n", (unsigned long)[data length]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
     NSLog(@"%@", rtpHeader);
     rtspSeq = SEQ_RECORD;
-    [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_RECORD];
+    NSMutableData *packet = [NSMutableData dataWithData:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding]];
+    [packet appendData:data];
+    [self sendMessage:packet tag:SEQ_RECORD];
 }
 
 - (void)sendTEARDOWN
@@ -183,14 +186,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             {
                 NSTextCheckingResult *match_sub = [regexp_sub firstMatchInString:substring options:0 range:NSMakeRange(0, substring.length)];
                 NSString *rawValue = [substring substringWithRange:[match_sub rangeAtIndex:0]];
-                if([[rawValue substringFromIndex:0] isEqualToString:@" "])
-                {
-                    self.sessionid = [rawValue substringFromIndex:1];
-                }
-                else
-                {
-                    self.sessionid = rawValue;
-                }
+                self.sessionid = [rawValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
             }
         }
     }
@@ -203,30 +199,34 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)messageReceived:(NSData *)data tag:(long)tag
 {
-    if( tag == SEQ_ANNOUNCE )
+    if( rtspSeq == SEQ_ANNOUNCE )
     {
         NSString *string = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
         NSLog(@"%@", string);
         [readBuffer appendData:data];
-        if([string isEqual:@"\r\n"])
+        const char* bytes = (const char*)[data bytes];
+        if(bytes[0] == 0x0d && bytes[1] == 0x0a)
         {
             NSString *bufferString = [[NSString alloc] initWithBytes:[readBuffer bytes] length:[readBuffer length] encoding:NSUTF8StringEncoding];
+            BOOL is200OK = NO;
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
                 if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
-                
-                readBuffer = nil;
-                readBuffer = [[NSMutableData alloc] init];
-                [self sendSETUP];
+                is200OK = YES;
             }
             else
             {
                 [self close];
             }
             readBuffer = nil;
+            if(is200OK)
+            {
+                readBuffer = [[NSMutableData alloc] init];
+                [self performSelector:@selector(sendSETUP)];
+            }
         }
     }
-    else if( tag == SEQ_SETUP )
+    else if( rtspSeq == SEQ_SETUP )
     {
         /**
          * Convert data to a string for logging.
@@ -236,25 +236,25 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
         NSString *string = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
         NSLog(@"%@", string);
         [readBuffer appendData:data];
-        if([string isEqual:@"\r\n"])
+        const char* bytes = (const char*)[data bytes];
+        if(bytes[0] == 0x0d && bytes[1] == 0x0a)
         {
             NSString *bufferString = [[NSString alloc] initWithBytes:[readBuffer bytes] length:[readBuffer length] encoding:NSUTF8StringEncoding];
+            BOOL is200OK = NO;
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
                 if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
-                
-                readBuffer = nil;
-                readBuffer = [[NSMutableData alloc] init];
-//                [self sendRECORD];
+                is200OK = YES;
             }
             else
             {
                 [self close];
             }
             readBuffer = nil;
+            rtspSeq = SEQ_RECORD;
         }
     }
-    else if( tag == SEQ_RECORD )
+    else if( rtspSeq == SEQ_RECORD )
     {
         /**
          * Convert data to a string for logging.
@@ -263,24 +263,6 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
          */
         NSString *string = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
         NSLog(@"%@", string);
-        [readBuffer appendData:data];
-        if([string isEqual:@"\r\n"])
-        {
-            NSString *bufferString = [[NSString alloc] initWithBytes:[readBuffer bytes] length:[readBuffer length] encoding:NSUTF8StringEncoding];
-            if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
-            {
-                if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
-                
-                readBuffer = nil;
-                readBuffer = [[NSMutableData alloc] init];
-                //
-            }
-            else
-            {
-                [self close];
-            }
-            readBuffer = nil;
-        }
     }
 }
 
@@ -311,16 +293,9 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)publish:(NSData *)data
 {
-//    if(socket == nil || !socket.isConnected || rtspSeq != SEQ_ANNOUNCE) return;
-//    
-//    NSString* rtpHeader = [NSString stringWithFormat:@"ANNOUNCE %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/live/mp4:%@", self.address, self.port, self.streamName]];
-//    rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
-//    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Type: application/sdp\r\nContent-Length: %lu\r\n\r\n", (unsigned long)data.length];
-//    
-//    NSMutableData *packet = [NSMutableData dataWithData:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding]];
-//    [packet appendData:data];
-//    
-//    [socket writeData:data withTimeout:-1 tag:SEQ_ANNOUNCE];
+    if(socket == nil || !socket.isConnected || rtspSeq != SEQ_RECORD) return;
+    
+    [self sendRECORD:data];
 }
 
 @end

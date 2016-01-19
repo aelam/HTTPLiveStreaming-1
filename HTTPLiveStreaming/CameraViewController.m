@@ -18,7 +18,7 @@
     AVCaptureVideoPreviewLayer *previewLayer;
     NSString *h264File;
 //    NSString *aacFile;
-//    NSFileHandle *fileH264Handle;
+    NSFileHandle *fileH264Handle;
 //    NSFileHandle *fileAACHandle;
     AVCaptureConnection* connectionVideo;
     AVCaptureConnection* connectionAudio;
@@ -33,8 +33,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    h264Encoder = [H264HWEncoder alloc];
-    [h264Encoder initWithConfiguration];
+    h264Encoder = [[H264HWEncoder alloc] init];
     h264Encoder.delegate = self;
     
     aacEncoder = [[AACEncoder alloc] init];
@@ -73,7 +72,6 @@
         [_StartStopButton setTitle:@"Start" forState:UIControlStateNormal];
         startCalled = true;
         [self stopCamera];
-        [h264Encoder end];
     }
 }
 
@@ -98,10 +96,11 @@
     NSDictionary* videoSettings = [NSDictionary dictionaryWithObject:val forKey:key];
     outputVideoDevice.videoSettings = videoSettings;
     
-    [outputVideoDevice setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
+    dispatch_queue_t queue = dispatch_queue_create("com.metapleasure.HTTPLiveStreaming", NULL);
+    [outputVideoDevice setSampleBufferDelegate:self queue:queue];
     
     AVCaptureAudioDataOutput *outputAudioDevice = [[AVCaptureAudioDataOutput alloc] init];
-    [outputAudioDevice setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
+    [outputAudioDevice setSampleBufferDelegate:self queue:queue];
     
     // initialize capture session
     
@@ -144,18 +143,18 @@
     
     [captureSession startRunning];
     
-//    NSFileManager *fileManager = [NSFileManager defaultManager];
-//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//    NSString *documentsDirectory = [paths objectAtIndex:0];
-//    
-//    // Drop file to raw 264 track
-//    h264File = [documentsDirectory stringByAppendingPathComponent:@"test.ts"];
-//    [fileManager removeItemAtPath:h264File error:nil];
-//    [fileManager createFileAtPath:h264File contents:nil attributes:nil];
-//    
-//    // Open the file using POSIX as this is anyway a test application
-//    fileH264Handle = [NSFileHandle fileHandleForWritingAtPath:h264File];
-//    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    
+    // Drop file to raw 264 track
+    h264File = [documentsDirectory stringByAppendingPathComponent:@"test.h264"];
+    [fileManager removeItemAtPath:h264File error:nil];
+    [fileManager createFileAtPath:h264File contents:nil attributes:nil];
+    
+    // Open the file using POSIX as this is anyway a test application
+    fileH264Handle = [NSFileHandle fileHandleForWritingAtPath:h264File];
+//
 //    // Drop file to raw aac track
 //    aacFile = [documentsDirectory stringByAppendingPathComponent:@"test.aac"];
 //    [fileManager removeItemAtPath:aacFile error:nil];
@@ -163,8 +162,6 @@
 //    
 //    // Open the file using POSIX as this is anyway a test application
 //    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
-    
-    [h264Encoder startEncode:480 height:640 bitrate:550];
     
     [rtsp connect:@"192.168.0.144" port:1935 stream:@"mpegts"];
 }
@@ -200,8 +197,8 @@
     [captureSession stopRunning];
     [previewLayer removeFromSuperlayer];
     [rtsp close];
-//    [fileH264Handle closeFile];
-//    fileH264Handle = NULL;
+    [fileH264Handle closeFile];
+    fileH264Handle = NULL;
 //    [fileAACHandle closeFile];
 //    fileAACHandle = NULL;
 }
@@ -222,25 +219,14 @@
 
 #pragma mark -  H264HWEncoderDelegate declare
 
-- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps
-{
-//    NSLog(@"gotSpsPps %d %d", (int)[sps length], (int)[pps length]);
-//    [fileH264Handle writeData:sps];
-//    [fileH264Handle writeData:pps];
-    NSMutableData *data = [NSMutableData dataWithData:sps];
-    [data appendData:pps];
-    
-    [rtsp publish:data];
-}
-
-- (void)gotH264EncodedData:(NSData*)data isKeyFrame:(BOOL)isKeyFrame
+- (void)gotH264EncodedData:(NSData*)data
 {
 //    NSLog(@"gotH264EncodedData %d", (int)[data length]);
     
-//    if (fileH264Handle != NULL)
-//    {
-//        [fileH264Handle writeData:data];
-//    }
+    if (fileH264Handle != NULL)
+    {
+        [fileH264Handle writeData:data];
+    }
     
     [rtsp publish:data];
 }
