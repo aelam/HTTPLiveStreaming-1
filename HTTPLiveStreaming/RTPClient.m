@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 {
     int cseq;
     
-    GCDAsyncSocket *socket;
+    AsyncSocket *socket;
     RTSP_SEQ rtspSeq;
     
     NSMutableData *readBuffer;
@@ -43,8 +43,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     {
         cseq = 0;
         
-        dispatch_queue_t mainQueue = dispatch_get_main_queue();
-        socket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:mainQueue];
+        socket = [[AsyncSocket alloc] initWithDelegate:self];
         rtspSeq = SEQ_IDLE;
         self.sessionid = nil;
         self.address = nil;
@@ -71,12 +70,14 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     readBuffer = nil;
     readBuffer = [[NSMutableData alloc] init];
     
-    NSError *error;
-    [socket connectToHost:address onPort:port withTimeout:-1 error:&error];
-    if(error != nil)
-    {
-        NSLog(@"%@", [error localizedDescription]);
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSError *error;
+        [socket connectToHost:address onPort:port withTimeout:-1 error:&error];
+        if(error != nil)
+        {
+            NSLog(@"%@", [error localizedDescription]);
+        }
+    });
 }
 
 - (void)close
@@ -128,7 +129,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     rtspSeq = SEQ_RECORD;
     NSMutableData *packet = [NSMutableData dataWithData:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding]];
     [packet appendData:data];
-    [self sendMessage:packet tag:SEQ_RECORD];
+    [self sendMessage:[packet copy] tag:SEQ_RECORD];
 }
 
 - (void)sendTEARDOWN
@@ -218,6 +219,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             {
                 [self close];
             }
+            [readBuffer resetBytesInRange:NSMakeRange(0, [readBuffer length])];
             readBuffer = nil;
             if(is200OK)
             {
@@ -250,6 +252,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             {
                 [self close];
             }
+            [readBuffer resetBytesInRange:NSMakeRange(0, [readBuffer length])];
             readBuffer = nil;
             rtspSeq = SEQ_RECORD;
         }
@@ -268,15 +271,15 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 #pragma mark - GCDAsyncSocketDelegate
 
-- (void)socket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err {
+- (void)onSocket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err {
     NSLog(@"Disconnecting. Error: %@", [err localizedDescription]);
 }
 
-- (void)socketDidDisconnect:(AsyncSocket *)sock {
+- (void)onSocketDidDisconnect:(AsyncSocket *)sock {
     NSLog(@"Disconnected.");
 }
 
-- (void)socket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port {
+- (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port {
     NSLog(@"Connected To %@:%i.", host, port);
     
     rtspSeq = SEQ_ANNOUNCE;
@@ -284,7 +287,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     [self sendANNOUNCE];
 }
 
-- (void)socket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
+- (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
     [self messageReceived:data tag:tag];
     [socket readDataToData:[GCDAsyncSocket CRLFData] withTimeout:-1 tag:tag];
 }
@@ -293,9 +296,11 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)publish:(NSData *)data
 {
-    if(socket == nil || !socket.isConnected || rtspSeq != SEQ_RECORD) return;
-    
-    [self sendRECORD:data];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if(socket == nil || !socket.isConnected || rtspSeq != SEQ_RECORD) return;
+        
+        [self sendRECORD:data];
+    });
 }
 
 @end
