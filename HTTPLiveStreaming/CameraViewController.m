@@ -213,11 +213,24 @@
     else if(connection == connectionAudio)
     {
 //        NSLog( @"audio captured at ");
-        [aacEncoder encodeSampleBuffer:sampleBuffer];
+        [aacEncoder encode:sampleBuffer];
     }
 }
 
 #pragma mark -  H264HWEncoderDelegate declare
+
+- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps
+{
+//    NSLog(@"gotSpsPps %d %d", (int)[sps length], (int)[pps length]);
+    
+    [fileH264Handle writeData:sps];
+    [fileH264Handle writeData:pps];
+    
+    NSMutableData *data = [NSMutableData dataWithData:sps];
+    [data appendData:pps];
+    
+    [rtsp publish:data];
+}
 
 - (void)gotH264EncodedData:(NSData*)data
 {

@@ -14,6 +14,7 @@
 
 @required
 - (void)gotH264EncodedData:(NSData*)data;
+- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps;
 
 @end
 
