@@ -219,7 +219,7 @@
 
 #pragma mark -  H264HWEncoderDelegate declare
 
-- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps
+- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps timestamp:(CMTime)timestamp
 {
 //    NSLog(@"gotSpsPps %d %d", (int)[sps length], (int)[pps length]);
     
@@ -229,10 +229,10 @@
     NSMutableData *data = [NSMutableData dataWithData:sps];
     [data appendData:pps];
     
-    [rtsp publish:data];
+    [rtsp publish:data timestamp:timestamp];
 }
 
-- (void)gotH264EncodedData:(NSData*)data
+- (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp
 {
 //    NSLog(@"gotH264EncodedData %d", (int)[data length]);
     
@@ -241,12 +241,12 @@
         [fileH264Handle writeData:data];
     }
     
-    [rtsp publish:data];
+    [rtsp publish:data timestamp:timestamp];
 }
 
 #pragma mark - AACEncoderDelegate declare
 
-- (void)gotAACEncodedData:(NSData*)data error:(NSError*)error
+- (void)gotAACEncodedData:(NSData*)data timestamp:(CMTime)timestamp error:(NSError*)error
 {
 //    NSLog(@"gotAACEncodedData %d", (int)[data length]);
     
@@ -255,7 +255,7 @@
 //        [fileAACHandle writeData:data];
 //    }
     
-    [rtsp publish:data];
+    [rtsp publish:data timestamp:timestamp];
 }
 
 @end

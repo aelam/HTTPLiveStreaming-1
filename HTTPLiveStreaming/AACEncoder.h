@@ -13,7 +13,7 @@
 @protocol AACEncoderDelegate <NSObject>
 
 @required
-- (void)gotAACEncodedData:(NSData*)data error:(NSError*)error;
+- (void)gotAACEncodedData:(NSData*)data timestamp:(CMTime)timestamp error:(NSError*)error;
 
 @end
 

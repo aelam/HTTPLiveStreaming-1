@@ -52,6 +52,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     CFDictionaryRef attachment = (CFDictionaryRef)CFArrayGetValueAtIndex(attachments, 0);
     CFBooleanRef dependsOnOthers = (CFBooleanRef)CFDictionaryGetValue(attachment, kCMSampleAttachmentKey_DependsOnOthers);
     bool isKeyframe = (dependsOnOthers == kCFBooleanFalse);
+    CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     if (isKeyframe) {
         
         CMFormatDescriptionRef format = CMSampleBufferGetFormatDescription(sampleBuffer);
@@ -87,7 +88,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
                 self->sps = fullSPSData;
                 self->pps = fullPPSData;
                 
-                if (self.delegate && [self.delegate respondsToSelector:@selector(gotSpsPps:pps:)]) [self.delegate gotSpsPps:self->sps pps:self->pps];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(gotSpsPps:pps:timestamp:)]) [self.delegate gotSpsPps:self->sps pps:self->pps timestamp:timestamp];
             }
         }
         
@@ -138,7 +139,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             data = fullAVCData;
             
             if (self.delegate != nil) {
-                [self.delegate gotH264EncodedData:data];
+                [self.delegate gotH264EncodedData:data timestamp:timestamp];
             }
             
             // Move to the next NAL unit in the block buffer

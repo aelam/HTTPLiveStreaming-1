@@ -13,8 +13,8 @@
 @protocol H264HWEncoderDelegate <NSObject>
 
 @required
-- (void)gotH264EncodedData:(NSData*)data;
-- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps;
+- (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp;
+- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps timestamp:(CMTime)timestamp;
 
 @end
 

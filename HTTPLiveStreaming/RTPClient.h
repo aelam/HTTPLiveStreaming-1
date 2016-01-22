@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreMedia/CoreMedia.h>
 
 #define TAG_CONNECT 0
 #define TAG_PUBLISH 1
@@ -21,6 +22,6 @@
 - (void)connect:(NSString *)address port:(NSInteger)port stream:(NSString *)stream;
 - (void)close;
 
-- (void)publish:(NSData *)data;
+- (void)publish:(NSData *)data timestamp:(CMTime)timestamp;
 
 @end

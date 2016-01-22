@@ -171,7 +171,8 @@ static OSStatus inInputDataProc(AudioConverterRef inAudioConverter, UInt32 *ioNu
         }
         if (self.delegate != nil) {
             dispatch_async(_callbackQueue, ^{
-                [self.delegate gotAACEncodedData:data error:error];
+                CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+                [self.delegate gotAACEncodedData:data timestamp:timestamp error:error];
             });
         }
         CFRelease(sampleBuffer);
