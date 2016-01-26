@@ -10,6 +10,7 @@
 		A845EE5E1C4C7C03004E0F13 /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A845EE591C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */; };
 		A845EE5F1C4C7C03004E0F13 /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A845EE591C4C7BF5004E0F13 /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A874364D1C476C330010D438 /* RTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A874364B1C476C330010D438 /* RTPClient.m */; };
+		A89034171C57195900EBD599 /* RTSPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A89034161C57195900EBD599 /* RTSPClient.m */; };
 		A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAEFE1C3B49CB000229C3 /* main.m */; };
 		A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF011C3B49CB000229C3 /* AppDelegate.m */; };
 		A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF041C3B49CB000229C3 /* AAPLPlayerViewController.m */; };
@@ -77,6 +78,8 @@
 		A845EE521C4C7BF5004E0F13 /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
 		A874364B1C476C330010D438 /* RTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTPClient.m; sourceTree = "<group>"; };
 		A874364C1C476C330010D438 /* RTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTPClient.h; sourceTree = "<group>"; };
+		A89034151C57195900EBD599 /* RTSPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTSPClient.h; sourceTree = "<group>"; };
+		A89034161C57195900EBD599 /* RTSPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTSPClient.m; sourceTree = "<group>"; };
 		A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPLiveStreaming.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BCAEFE1C3B49CB000229C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A8BCAF001C3B49CB000229C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -164,6 +167,8 @@
 				A8BCAF371C3E03AE000229C3 /* H264HWEncoder.m */,
 				A8BCAF491C3F57C3000229C3 /* AACEncoder.h */,
 				A8BCAF4A1C3F57C3000229C3 /* AACEncoder.m */,
+				A89034151C57195900EBD599 /* RTSPClient.h */,
+				A89034161C57195900EBD599 /* RTSPClient.m */,
 				A874364C1C476C330010D438 /* RTPClient.h */,
 				A874364B1C476C330010D438 /* RTPClient.m */,
 				A8BCAF391C3E05D0000229C3 /* CameraViewController.h */,
@@ -301,6 +306,7 @@
 				A8BCAF211C3B8F08000229C3 /* AAPLPlayerView.m in Sources */,
 				A8BCAF3B1C3E05D0000229C3 /* CameraViewController.m in Sources */,
 				A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */,
+				A89034171C57195900EBD599 /* RTSPClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
