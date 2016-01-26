@@ -24,7 +24,8 @@
     AVCaptureConnection* connectionVideo;
     AVCaptureConnection* connectionAudio;
     RTSPClient *rtsp;
-    RTPClient *rtp;
+    RTPClient *rtp_video;
+    RTPClient *rtp_audio;
 }
 @property (weak, nonatomic) IBOutlet UIButton *StartStopButton;
 @end
@@ -46,7 +47,8 @@
     rtsp = [[RTSPClient alloc] init];
     rtsp.delegate = self;
     
-    rtp = [[RTPClient alloc] init];
+    rtp_video = [[RTPClient alloc] init];
+    rtp_audio = [[RTPClient alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -169,6 +171,12 @@
 //    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
     
     [rtsp connect:@"192.168.0.144" port:1935 stream:@"mpegts"];
+    
+    rtp_video.address = @"192.168.0.144";
+    rtp_video.port = 10001;
+    
+    rtp_audio.address = @"192.168.0.144";
+    rtp_audio.port = 10000;
 }
 
 - (void)statusBarOrientationDidChange:(NSNotification*)notification {
@@ -202,7 +210,6 @@
     [captureSession stopRunning];
     [previewLayer removeFromSuperlayer];
     [rtsp close];
-    [rtp close];
 //    [fileH264Handle closeFile];
 //    fileH264Handle = NULL;
 //    [fileAACHandle closeFile];
@@ -227,17 +234,15 @@
 
 - (void)onRTSPDidConnectedOK:(RTSPClient *)_rtsp
 {
-    [rtp connect:@"192.168.0.144" port:10000];
 }
 
 - (void)onRTSPDidConnectedFailed:(RTSPClient *)_rtsp
 {
-    [rtp close];
+    [rtsp close];
 }
 
 - (void)onRTSPDidDisConnected:(RTSPClient *)_rtsp
 {
-    [rtp close];
     [rtsp close];
 }
 
@@ -253,7 +258,7 @@
     NSMutableData *data = [NSMutableData dataWithData:sps];
     [data appendData:pps];
     
-    [rtp publish:data timestamp:timestamp];
+    [rtp_video publish:data payloadType:RTP_PAYLOAD_H264 timestamp:timestamp];
 }
 
 - (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp
@@ -265,7 +270,7 @@
 //        [fileH264Handle writeData:data];
 //    }
     
-    [rtp publish:data timestamp:timestamp];
+    [rtp_video publish:data payloadType:RTP_PAYLOAD_H264 timestamp:timestamp];
 }
 
 #pragma mark - AACEncoderDelegate declare
@@ -279,7 +284,7 @@
 //        [fileAACHandle writeData:data];
 //    }
     
-    [rtp publish:data timestamp:timestamp];
+    [rtp_audio publish:data payloadType:RTP_PAYLOAD_AAC timestamp:timestamp];
 }
 
 @end

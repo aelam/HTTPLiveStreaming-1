@@ -34,12 +34,10 @@ typedef struct rtp_package {
     uint8_t *rtp_load;
 } rtp_t;
 
-#define H264        96
-
 #define SEND_BUF_SIZE               1500
 #define SSRC_NUM                    10
 
-@interface RTPClient() <AsyncSocketDelegate, AsyncUdpSocketDelegate>
+@interface RTPClient() <AsyncUdpSocketDelegate>
 {
     int cseq;
     
@@ -60,41 +58,22 @@ typedef struct rtp_package {
         
         socket_rtp = [[AsyncUdpSocket alloc] initWithDelegate:self];
         self.address = nil;
-        self.port = 0;
+        self.port = 554;
     }
     return self;
 }
 
-- (void)dealloc
-{
-    [self close];
-}
-
-#pragma mark - Connection Handshake
-
-- (void)connect:(NSString *)address port:(NSInteger)port
-{
-    self.address = address;
-    self.port = port;
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSError *error;
-        [socket_rtp connectToHost:self.address onPort:self.port error:&error];
-        if(error != nil)
-        {
-            NSLog(@"%@", [error localizedDescription]);
-        }
-    });
-}
-
-- (void)close
-{
-    [socket_rtp close];
-    self.address = nil;
-    self.port = 0;
-}
-
 #pragma mark - AsyncUdpSocketDelegate
+
+- (void)onUdpSocket:(AsyncUdpSocket *)sock didSendDataWithTag:(long)tag
+{
+    
+}
+
+- (void)onUdpSocket:(AsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error
+{
+    
+}
 
 - (BOOL)onUdpSocket:(AsyncUdpSocket *)sock didReceiveData:(NSData *)data withTag:(long)tag fromHost:(NSString *)host port:(UInt16)port
 {
@@ -103,18 +82,16 @@ typedef struct rtp_package {
 
 #pragma mark - Publish
 
-- (void)publish:(NSData *)data timestamp:(CMTime)timestamp
+- (void)publish:(NSData *)data payloadType:(int)payloadType timestamp:(CMTime)timestamp
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if(socket_rtp == nil || !socket_rtp.isConnected) return;
-        
         rtp_header_t rtp_hdr;
         
         rtp_hdr.csrc_len = 0;
         rtp_hdr.extension = 0;
         rtp_hdr.padding = 0;
         rtp_hdr.version = 2;
-        rtp_hdr.payload_type = H264;
+        rtp_hdr.payload_type = payloadType;
         rtp_hdr.seq_no = htons(cseq++ % UINT16_MAX);
         rtp_hdr.timestamp = htonl(timestamp.value);
         rtp_hdr.ssrc = htonl(SSRC_NUM);

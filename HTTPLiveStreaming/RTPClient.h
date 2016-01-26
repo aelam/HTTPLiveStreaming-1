@@ -9,14 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CoreMedia.h>
 
+#define RTP_PAYLOAD_H264        98
+#define RTP_PAYLOAD_AAC         96
+
 @interface RTPClient : NSObject
 
 @property (weak, nonatomic) NSString *address;
 @property (nonatomic) NSInteger port;
 
-- (void)connect:(NSString *)address port:(NSInteger)port;
-- (void)close;
-
-- (void)publish:(NSData *)data timestamp:(CMTime)timestamp;
+- (void)publish:(NSData *)data payloadType:(int)payloadType timestamp:(CMTime)timestamp;
 
 @end
