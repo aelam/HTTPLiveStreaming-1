@@ -173,10 +173,10 @@
     [rtsp connect:@"192.168.0.144" port:1935 stream:@"mpegts"];
     
     rtp_video.address = @"192.168.0.144";
-    rtp_video.port = 10001;
+    rtp_video.port = 10001; // This is an meanless information
     
     rtp_audio.address = @"192.168.0.144";
-    rtp_audio.port = 10000;
+    rtp_audio.port = 10000; // This is an meanless information
 }
 
 - (void)statusBarOrientationDidChange:(NSNotification*)notification {
@@ -244,6 +244,16 @@
 - (void)onRTSPDidDisConnected:(RTSPClient *)_rtsp
 {
     [rtsp close];
+}
+
+- (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSInteger)server_port
+{
+    rtp_audio.port = server_port; // We have use this port given from server
+}
+
+- (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSInteger)server_port
+{
+    rtp_video.port = server_port; // We have use this port given from server
 }
 
 #pragma mark -  H264HWEncoderDelegate declare

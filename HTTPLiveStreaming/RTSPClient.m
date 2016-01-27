@@ -293,6 +293,34 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     }
 }
 
+- (NSInteger)getServerPort:(NSString *)string
+{
+    NSError *error = nil;
+    NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:@"server_port=([0-9]*)" options:0 error:&error];
+    if(error != nil)
+    {
+        NSLog(@"%@", [error localizedDescription]);
+        return -1;
+    }
+    else
+    {
+        NSTextCheckingResult *match = [regexp firstMatchInString:string options:0 range:NSMakeRange(0, string.length)];
+        NSString *substring = [string substringWithRange:[match rangeAtIndex:0]];
+        NSRegularExpression *regexp_sub = [NSRegularExpression regularExpressionWithPattern:@"(?<==).*" options:0 error:&error];
+        if(error != nil)
+        {
+            NSLog(@"%@", error);
+            return -1;
+        }
+        else
+        {
+            NSTextCheckingResult *match_sub = [regexp_sub firstMatchInString:substring options:0 range:NSMakeRange(0, substring.length)];
+            NSString *rawValue = [substring substringWithRange:[match_sub rangeAtIndex:0]];
+            return [rawValue integerValue];
+        }
+    }
+}
+
 - (void)sendMessage:(NSData *)data tag:(long)tag
 {
     [socket_rtsp writeData:data withTimeout:-1 tag:tag];
@@ -345,6 +373,10 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             BOOL is200OK = NO;
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
+                if(self.delegate != nil && [self.delegate respondsToSelector:@selector(onRTSP:didSETUP_AUDIOWithServerPort:)] && [self getServerPort:bufferString] >= 0)
+                {
+                    [self.delegate onRTSP:self didSETUP_AUDIOWithServerPort:[self getServerPort:bufferString]];
+                }
                 if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
                 is200OK = YES;
             }
@@ -378,6 +410,10 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             BOOL is200OK = NO;
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
+                if(self.delegate != nil && [self.delegate respondsToSelector:@selector(onRTSP:didSETUP_VIDEOWithServerPort:)] && [self getServerPort:bufferString] >= 0)
+                {
+                    [self.delegate onRTSP:self didSETUP_VIDEOWithServerPort:[self getServerPort:bufferString]];
+                }
                 if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
                 is200OK = YES;
             }
