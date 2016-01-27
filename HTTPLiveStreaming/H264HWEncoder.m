@@ -13,19 +13,15 @@
 
 @implementation H264HWEncoder
 {
-    int  frameCount;
-    
     NSData *sps;
     NSData *pps;
 }
 
 - (void) dealloc {
-    frameCount = 0;
 }
 
 - (id) init {
     if (self = [super init]) {
-        frameCount = 0;
     }
     return self;
 }
@@ -160,12 +156,10 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     if (ret == noErr) {
         VTSessionSetProperty(session, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
         
-        frameCount++;
-        
         // Create properties
-        CMTime presentationTimeStamp = CMTimeMake(frameCount, 1000);
+        CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
         
-        VTCompressionSessionEncodeFrame(session, imageBuffer, presentationTimeStamp, kCMTimeInvalid, NULL, NULL, NULL);
+        VTCompressionSessionEncodeFrame(session, imageBuffer, timestamp, kCMTimeInvalid, NULL, NULL, NULL);
         VTCompressionSessionEndPass(session, false, NULL);
     }
     

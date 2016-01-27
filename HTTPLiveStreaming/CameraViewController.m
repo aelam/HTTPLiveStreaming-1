@@ -268,7 +268,7 @@
     NSMutableData *data = [NSMutableData dataWithData:sps];
     [data appendData:pps];
     
-    [rtp_video publish:data payloadType:RTP_PAYLOAD_H264 timestamp:timestamp];
+    [rtp_video publish:data timestamp:timestamp];
 }
 
 - (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp
@@ -280,7 +280,7 @@
 //        [fileH264Handle writeData:data];
 //    }
     
-    [rtp_video publish:data payloadType:RTP_PAYLOAD_H264 timestamp:timestamp];
+    [rtp_video publish:data timestamp:timestamp];
 }
 
 #pragma mark - AACEncoderDelegate declare
@@ -294,7 +294,7 @@
 //        [fileAACHandle writeData:data];
 //    }
     
-    [rtp_audio publish:data payloadType:RTP_PAYLOAD_AAC timestamp:timestamp];
+    [rtp_audio publish:data timestamp:timestamp];
 }
 
 @end

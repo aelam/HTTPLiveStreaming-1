@@ -17,6 +17,6 @@
 @property (weak, nonatomic) NSString *address;
 @property (nonatomic) NSInteger port;
 
-- (void)publish:(NSData *)data payloadType:(int)payloadType timestamp:(CMTime)timestamp;
+- (void)publish:(NSData *)data timestamp:(CMTime)timestamp;
 
 @end

@@ -7,35 +7,45 @@
 //
 //  https://en.wikipedia.org/wiki/Real_Time_Streaming_Protocol
 //  http://stackoverflow.com/questions/17896008/can-ffmpeg-library-send-the-live-h264-ios-camera-stream-to-wowza-using-rtsp
+//  https://github.com/goertzenator/lwip/blob/master/contrib-1.4.0/apps/rtp/rtp.c
 
 #import "RTPClient.h"
 #import <CocoaAsyncSocket/CocoaAsyncSocket.h>
 
-typedef struct rtp_header {
-    /* little-endian */
-    /* byte 0 */
-    uint8_t csrc_len:       4;  /* bit: 0~3 */
-    uint8_t extension:      1;  /* bit: 4 */
-    uint8_t padding:        1;  /* bit: 5*/
-    uint8_t version:        2;  /* bit: 6~7 */
-    /* byte 1 */
-    uint8_t payload_type:   7;  /* bit: 0~6 */
-    uint8_t marker:         1;  /* bit: 7 */
-    /* bytes 2, 3 */
-    uint16_t seq_no;
-    /* bytes 4-7 */
-    uint32_t timestamp;
-    /* bytes 8-11 */
-    uint32_t ssrc;
-} __attribute__ ((packed)) rtp_header_t; /* 12 bytes */
+#include <string.h>
 
-typedef struct rtp_package {
-    rtp_header_t rtp_package_header;
-    uint8_t *rtp_load;
-} rtp_t;
+/* These macros should be calculated by the preprocessor and are used
+ with compile-time constants only (so that there is no little-endian
+ overhead at runtime). */
+#define PP_HTONS(x) ((((x) & 0xff) << 8) | (((x) & 0xff00) >> 8))
+#define PP_NTOHS(x) PP_HTONS(x)
+#define PP_HTONL(x) ((((x) & 0xff) << 24) | \
+                    (((x) & 0xff00) << 8) | \
+                    (((x) & 0xff0000UL) >> 8) | \
+                    (((x) & 0xff000000UL) >> 24))
+#define PP_NTOHL(x) PP_HTONL(x)
 
-#define SEND_BUF_SIZE               1500
-#define SSRC_NUM                    10
+#define PACK_STRUCT_FIELD(fld) fld
+
+/** RTP packet/payload size */
+#define RTP_PACKET_SIZE             1500
+#define RTP_PAYLOAD_SIZE            1024
+
+/** RTP header constants */
+#define RTP_VERSION                 0x80
+#define RTP_TIMESTAMP_INCREMENT     3600
+#define RTP_SSRC                    0
+#define RTP_PAYLOADTYPE             96
+#define RTP_MARKER_MASK             0x80
+
+/** RTP message header */
+struct rtp_hdr {
+    PACK_STRUCT_FIELD(uint8_t  version);
+    PACK_STRUCT_FIELD(uint8_t  payloadtype);
+    PACK_STRUCT_FIELD(uint16_t seqNum);
+    PACK_STRUCT_FIELD(uint32_t timestamp);
+    PACK_STRUCT_FIELD(uint32_t ssrc);
+};
 
 @interface RTPClient() <AsyncUdpSocketDelegate>
 {
@@ -43,7 +53,8 @@ typedef struct rtp_package {
     
     AsyncUdpSocket *socket_rtp;
     
-    uint8_t SENDBUFFER[SEND_BUF_SIZE];
+    /** RTP packets */
+    uint8_t rtp_send_packet[RTP_PACKET_SIZE];
 }
 @end
 
@@ -82,27 +93,40 @@ typedef struct rtp_package {
 
 #pragma mark - Publish
 
-- (void)publish:(NSData *)data payloadType:(int)payloadType timestamp:(CMTime)timestamp
+- (void)publish:(NSData *)data timestamp:(CMTime)timestamp
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        rtp_header_t rtp_hdr;
+        struct rtp_hdr* rtphdr;
+        uint8_t*        rtp_payload;
+        int             rtp_payload_size;
+        int             rtp_data_index;
         
-        rtp_hdr.csrc_len = 0;
-        rtp_hdr.extension = 0;
-        rtp_hdr.padding = 0;
-        rtp_hdr.version = 2;
-        rtp_hdr.payload_type = payloadType;
-        rtp_hdr.seq_no = htons(cseq++ % UINT16_MAX);
-        rtp_hdr.timestamp = htonl(timestamp.value);
-        rtp_hdr.ssrc = htonl(SSRC_NUM);
+        memset(rtp_send_packet, 0, sizeof(rtp_send_packet));
         
-        struct rtp_package rtp_pkg;
+        /* prepare RTP packet */
+        rtphdr = (struct rtp_hdr*)rtp_send_packet;
+        rtphdr->version     = RTP_VERSION;
+        rtphdr->payloadtype = 0;
+        rtphdr->ssrc        = PP_HTONL(RTP_SSRC);
+        rtphdr->timestamp   = htonl( ((float)timestamp.value / timestamp.timescale) * 1000 );
         
-        rtp_pkg.rtp_package_header = rtp_hdr;
-        rtp_pkg.rtp_load = (u_int8_t *)[data bytes];
-        
-        NSData *packet = [NSData dataWithBytes:&rtp_pkg length:sizeof(rtp_pkg)];
-        [socket_rtp sendData:packet toHost:self.address port:self.port withTimeout:-1 tag:0];
+        /* send RTP stream packets */
+        rtp_data_index = 0;
+        do {
+            rtp_payload      = rtp_send_packet+sizeof(struct rtp_hdr);
+            rtp_payload_size = fmin(RTP_PAYLOAD_SIZE, ([data length] - rtp_data_index));
+            
+            memcpy(rtp_payload, [data bytes] + rtp_data_index, rtp_payload_size);
+            
+            /* set MARKER bit in RTP header on the last packet of an image */
+            rtphdr->payloadtype = RTP_PAYLOADTYPE | (((rtp_data_index + rtp_payload_size) >= [data length]) ? RTP_MARKER_MASK : 0);
+            
+            /* send RTP stream packet */
+            NSData *packet = [NSData dataWithBytes:rtp_send_packet length:(sizeof(struct rtp_hdr) + rtp_payload_size)];
+            [socket_rtp sendData:packet toHost:self.address port:self.port withTimeout:-1 tag:0];
+            rtphdr->seqNum  = htons(ntohs(rtphdr->seqNum) + 1);
+            rtp_data_index += rtp_payload_size;
+        }while (rtp_data_index < [data length]);
     });
 }
 

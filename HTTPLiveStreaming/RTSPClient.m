@@ -166,7 +166,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     
     NSString* session = @"v=0\r\n";
     session = [session stringByAppendingFormat:@"o=- 0 0 IN IP4 %@\r\n", myip];
-    session = [session stringByAppendingFormat:@"s=HTTPLiveStreaming\r\n"];
+    session = [session stringByAppendingFormat:@"s=MPEGTS\r\n"];
     session = [session stringByAppendingFormat:@"c=IN IP4 %@\r\n", myip];
     session = [session stringByAppendingFormat:@"t=0 0\r\n"];
     session = [session stringByAppendingFormat:@"a=tool:HTTPLiveStreaming\r\n"];
