@@ -43,12 +43,12 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         return;
     }
     
-//    CMBlockBufferRef block = CMSampleBufferGetDataBuffer(sampleBuffer);
     CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false);
     CFDictionaryRef attachment = (CFDictionaryRef)CFArrayGetValueAtIndex(attachments, 0);
     CFBooleanRef dependsOnOthers = (CFBooleanRef)CFDictionaryGetValue(attachment, kCMSampleAttachmentKey_DependsOnOthers);
     bool isKeyframe = (dependsOnOthers == kCFBooleanFalse);
     CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+    NSMutableData *fulldata = [NSMutableData data];
     if (isKeyframe) {
         
         CMFormatDescriptionRef format = CMSampleBufferGetFormatDescription(sampleBuffer);
@@ -81,30 +81,13 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
                 [fullSPSData appendData:self->sps];
                 [fullPPSData appendData:self->pps];
                 
+                [fulldata appendData:fullSPSData];
+                [fulldata appendData:fullPPSData];
+                
                 self->sps = fullSPSData;
                 self->pps = fullPPSData;
-                
-                if (self.delegate && [self.delegate respondsToSelector:@selector(gotSpsPps:pps:timestamp:)]) [self.delegate gotSpsPps:self->sps pps:self->pps timestamp:timestamp];
             }
         }
-        
-//        char* bufferData;
-//        size_t size;
-//        CMBlockBufferGetDataPointer(block, 0, NULL, &size, &bufferData);
-//        
-//        NSData *data = [NSData dataWithBytes:bufferData length:size];
-//        
-//        const char bytes[] = "\x00\x00\x00\x01"; // AVC Header
-//        size_t length = (sizeof bytes) - 1; //string literals have implicit trailing '\0'
-//        NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
-//        NSMutableData *fullAVCData = [NSMutableData dataWithData:byteHeader];
-//
-//        [fullAVCData appendData:data];
-//        data = fullAVCData;
-//
-//        if (self.delegate != nil) {
-//            [self.delegate gotH264EncodedData:data];
-//        }
     }
     
     CMBlockBufferRef dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
@@ -132,15 +115,16 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             NSMutableData *fullAVCData = [NSMutableData dataWithData:byteHeader];
             
             [fullAVCData appendData:data];
-            data = fullAVCData;
             
-            if (self.delegate != nil) {
-                [self.delegate gotH264EncodedData:data timestamp:timestamp];
-            }
+            [fulldata appendData:fullAVCData];
             
             // Move to the next NAL unit in the block buffer
             bufferOffset += AVCCHeaderLength + NALUnitLength;
         }
+    }
+    
+    if (self.delegate != nil) {
+        [self.delegate gotH264EncodedData:fulldata timestamp:timestamp];
     }
 }
 
@@ -155,6 +139,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     OSStatus ret = VTCompressionSessionCreate(NULL, (int)width, (int)height, kCMVideoCodecType_H264, NULL, NULL, NULL, didCompressH264, (__bridge void *)(self), &session);
     if (ret == noErr) {
         VTSessionSetProperty(session, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_ProfileLevel,kVTProfileLevel_H264_Baseline_3_0);
         
         // Create properties
         CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);

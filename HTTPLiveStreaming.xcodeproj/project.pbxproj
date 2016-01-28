@@ -226,6 +226,11 @@
 					A8BCAEF91C3B49CB000229C3 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = 6VUS242CFU;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};

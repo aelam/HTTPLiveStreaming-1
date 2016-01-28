@@ -170,13 +170,13 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     session = [session stringByAppendingFormat:@"c=IN IP4 %@\r\n", myip];
     session = [session stringByAppendingFormat:@"t=0 0\r\n"];
     session = [session stringByAppendingFormat:@"a=tool:HTTPLiveStreaming\r\n"];
-    session = [session stringByAppendingFormat:@"m=audio 49230 RTP/AVP 96\r\n"];
+    session = [session stringByAppendingFormat:@"m=audio 0 RTP/AVP 96\r\n"];
     session = [session stringByAppendingFormat:@"a=rtpmap:96 MP4A-LATM/24000/2\r\n"];
     session = [session stringByAppendingFormat:@"a=fmtp:96 profile-level-id=1; bitrate=64000;cpresent=0;object=2;config=400026203fc0\r\n"];
     session = [session stringByAppendingFormat:@"a=control:trackID=0\r\n"];
-    session = [session stringByAppendingFormat:@"m=video 49170 RTP/AVP 98\r\n"];
-    session = [session stringByAppendingFormat:@"a=rtpmap:98 H264/90000\r\n"];
-    session = [session stringByAppendingFormat:@"a=fmtp:98 packetization-mode=1;profile-level-id=42A01E;sprop-parameter-sets=Z0IAKOkBQHsg,aM4xUg==;\r\n"];
+    session = [session stringByAppendingFormat:@"m=video 0 RTP/AVP 96\r\n"];
+    session = [session stringByAppendingFormat:@"a=rtpmap:96 H264/90000\r\n"];
+    session = [session stringByAppendingFormat:@"a=fmtp:96 packetization-mode=2;profile-level-id=42A01E;sprop-parameter-sets=Z0IAKOkBQHsg,aM4xUg==;\r\n"];
     session = [session stringByAppendingFormat:@"a=control:trackID=1\r\n"];
     session = [session stringByAppendingFormat:@"\r\n"];
     

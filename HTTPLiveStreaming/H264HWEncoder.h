@@ -14,7 +14,6 @@
 
 @required
 - (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp;
-- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps timestamp:(CMTime)timestamp;
 
 @end
 

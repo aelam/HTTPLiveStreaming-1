@@ -170,12 +170,12 @@
 //    // Open the file using POSIX as this is anyway a test application
 //    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
     
-    [rtsp connect:@"192.168.0.144" port:1935 stream:@"mpegts"];
+    [rtsp connect:@"192.168.0.240" port:1935 stream:@"mpegts"];
     
-    rtp_video.address = @"192.168.0.144";
+    rtp_video.address = @"192.168.0.240";
     rtp_video.port = 10001; // This is an meanless information
     
-    rtp_audio.address = @"192.168.0.144";
+    rtp_audio.address = @"192.168.0.240";
     rtp_audio.port = 10000; // This is an meanless information
 }
 
@@ -257,19 +257,6 @@
 }
 
 #pragma mark -  H264HWEncoderDelegate declare
-
-- (void)gotSpsPps:(NSData*)sps pps:(NSData*)pps timestamp:(CMTime)timestamp
-{
-//    NSLog(@"gotSpsPps %d %d", (int)[sps length], (int)[pps length]);
-    
-//    [fileH264Handle writeData:sps];
-//    [fileH264Handle writeData:pps];
-    
-    NSMutableData *data = [NSMutableData dataWithData:sps];
-    [data appendData:pps];
-    
-    [rtp_video publish:data timestamp:timestamp];
-}
 
 - (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp
 {
