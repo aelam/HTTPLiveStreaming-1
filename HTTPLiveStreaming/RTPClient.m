@@ -33,8 +33,6 @@
 
 /** RTP header constants */
 #define RTP_VERSION                 0x80
-#define RTP_TIMESTAMP_INCREMENT     3600
-#define RTP_SSRC                    0
 #define RTP_PAYLOADTYPE             96
 #define RTP_MARKER_MASK             0x80
 
@@ -49,12 +47,12 @@ struct rtp_hdr {
 
 @interface RTPClient() <AsyncUdpSocketDelegate>
 {
-    int cseq;
-    
     AsyncUdpSocket *socket_rtp;
     
     /** RTP packets */
     uint8_t rtp_send_packet[RTP_PACKET_SIZE];
+    
+    uint16_t seqNum;
 }
 @end
 
@@ -65,8 +63,6 @@ struct rtp_hdr {
     self = [super init];
     if (self)
     {
-        cseq = 0;
-        
         socket_rtp = [[AsyncUdpSocket alloc] initWithDelegate:self];
         self.address = nil;
         self.port = 554;
@@ -101,19 +97,23 @@ struct rtp_hdr {
         int             rtp_payload_size;
         int             rtp_data_index;
         
-        memset(rtp_send_packet, 0, sizeof(rtp_send_packet));
-        
-        /* prepare RTP packet */
-        rtphdr = (struct rtp_hdr*)rtp_send_packet;
-        rtphdr->version     = RTP_VERSION;
-        rtphdr->payloadtype = 0;
-        rtphdr->ssrc        = PP_HTONL(RTP_SSRC);
-        rtphdr->timestamp   = htonl( ((float)timestamp.value / timestamp.timescale) * 1000 );
+        int32_t t = ((float)timestamp.value / timestamp.timescale) * 1000;
         
         /* send RTP stream packets */
         rtp_data_index = 0;
         do {
-            rtp_payload      = rtp_send_packet+sizeof(struct rtp_hdr);
+            // set data to 0
+            memset(rtp_send_packet, 0, sizeof(rtp_send_packet));
+            
+            /* prepare RTP packet */
+            rtphdr = (struct rtp_hdr*)rtp_send_packet;
+            rtphdr->version     = RTP_VERSION;
+            rtphdr->payloadtype = 0;
+            rtphdr->ssrc        = htonl( (int32_t)self.port );
+            rtphdr->seqNum      = seqNum;
+            rtphdr->timestamp   = htonl( t );
+            
+            rtp_payload      = rtp_send_packet + sizeof(struct rtp_hdr);
             rtp_payload_size = fmin(RTP_PAYLOAD_SIZE, ([data length] - rtp_data_index));
             
             memcpy(rtp_payload, [data bytes] + rtp_data_index, rtp_payload_size);
@@ -122,9 +122,10 @@ struct rtp_hdr {
             rtphdr->payloadtype = RTP_PAYLOADTYPE | (((rtp_data_index + rtp_payload_size) >= [data length]) ? RTP_MARKER_MASK : 0);
             
             /* send RTP stream packet */
-            NSData *packet = [NSData dataWithBytes:rtp_send_packet length:(sizeof(struct rtp_hdr) + rtp_payload_size)];
+            NSData *packet = [NSData dataWithBytes:rtp_send_packet length:(rtp_payload_size + sizeof(struct rtp_hdr))];
+            
             [socket_rtp sendData:packet toHost:self.address port:self.port withTimeout:-1 tag:0];
-            rtphdr->seqNum  = htons(ntohs(rtphdr->seqNum) + 1);
+            seqNum  = htons(ntohs(rtphdr->seqNum) + 1);
             rtp_data_index += rtp_payload_size;
         }while (rtp_data_index < [data length]);
     });

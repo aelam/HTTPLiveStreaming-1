@@ -21,7 +21,7 @@
 @interface RTSPClient : NSObject
 
 @property (weak, nonatomic) NSString *address;
-@property (nonatomic) NSInteger port;
+@property (nonatomic) int32_t port;
 @property (weak, nonatomic) NSString *streamName;
 @property (weak, nonatomic) NSString *sessionid;
 @property (weak, nonatomic) id<RTSPClientDelegate> delegate;

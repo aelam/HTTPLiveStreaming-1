@@ -281,7 +281,7 @@
 //        [fileAACHandle writeData:data];
 //    }
     
-    [rtp_audio publish:data timestamp:timestamp];
+//    [rtp_audio publish:data timestamp:timestamp];
 }
 
 @end
