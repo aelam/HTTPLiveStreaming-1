@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>HLSforOSX.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>HTTPLiveStreaming.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -12,6 +17,16 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>A81535421C677F920085E2FC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A81535771C6788D80085E2FC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>A87435BD1C46219B0010D438</key>
 		<dict>
 			<key>primary</key>

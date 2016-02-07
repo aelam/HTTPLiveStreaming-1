@@ -1,48 +1,48 @@
 //
-//  CameraViewController.m
-//  HTTPLiveStreaming
+//  ViewController.m
+//  HLSforOSX
 //
-//  Created by Byeongwook Park on 2016. 1. 7..
+//  Created by Byeong-uk Park on 2016. 2. 7..
 //  Copyright © 2016년 Metapleasure. All rights reserved.
 //
 
-#import "CameraViewController.h"
+#import "ViewController.h"
 #import "RTSPClient.h"
 #import "RTPClient.h"
 
-@interface CameraViewController () <RTSPClientDelegate>
+@interface ViewController () <RTSPClientDelegate>
 {
     H264HWEncoder *h264Encoder;
     AACEncoder *aacEncoder;
     AVCaptureSession *captureSession;
-    bool startCalled;
     AVCaptureVideoPreviewLayer *previewLayer;
 //    NSString *h264File;
 //    NSString *aacFile;
 //    NSFileHandle *fileH264Handle;
 //    NSFileHandle *fileAACHandle;
     AVCaptureConnection* connectionVideo;
-    AVCaptureConnection* connectionAudio;
+//    AVCaptureConnection* connectionAudio;
     RTSPClient *rtsp;
     RTPClient *rtp_video;
     RTPClient *rtp_audio;
 }
-@property (weak, nonatomic) IBOutlet UIButton *StartStopButton;
+@property (weak, nonatomic) IBOutlet NSView *preview;
 @end
 
-@implementation CameraViewController
+@implementation ViewController
+
+- (void)dealloc {
+    [self stopCamera];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
+
     h264Encoder = [[H264HWEncoder alloc] init];
     h264Encoder.delegate = self;
     
     aacEncoder = [[AACEncoder alloc] init];
     aacEncoder.delegate = self;
-    
-    startCalled = true;
     
     rtsp = [[RTSPClient alloc] init];
     rtsp.delegate = self;
@@ -53,35 +53,15 @@
     [self initCamera];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)viewDidAppear {
+    [self startCamera];
+    [super viewDidAppear];
 }
 
-/*
-#pragma mark - Navigation
+- (void)setRepresentedObject:(id)representedObject {
+    [super setRepresentedObject:representedObject];
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-// Called when start/stop button is pressed
-- (IBAction)OnStartStop:(id)sender {
-    if (startCalled)
-    {
-        [self startCamera];
-        startCalled = false;
-        [_StartStopButton setTitle:@"Stop" forState:UIControlStateNormal];
-    }
-    else
-    {
-        [_StartStopButton setTitle:@"Start" forState:UIControlStateNormal];
-        startCalled = true;
-        [self stopCamera];
-    }
+    // Update the view, if already loaded.
 }
 
 #pragma mark - Camera Control
@@ -93,10 +73,10 @@
     NSError *deviceError;
     
     AVCaptureDevice *cameraDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    AVCaptureDevice *microphoneDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+//    AVCaptureDevice *microphoneDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
     
     AVCaptureDeviceInput *inputCameraDevice = [AVCaptureDeviceInput deviceInputWithDevice:cameraDevice error:&deviceError];
-    AVCaptureDeviceInput *inputMicrophoneDevice = [AVCaptureDeviceInput deviceInputWithDevice:microphoneDevice error:&deviceError];
+//    AVCaptureDeviceInput *inputMicrophoneDevice = [AVCaptureDeviceInput deviceInputWithDevice:microphoneDevice error:&deviceError];
     
     // make output device
     
@@ -110,17 +90,17 @@
     dispatch_queue_t queue = dispatch_queue_create("com.metapleasure.HTTPLiveStreaming", NULL);
     [outputVideoDevice setSampleBufferDelegate:self queue:queue];
     
-    AVCaptureAudioDataOutput *outputAudioDevice = [[AVCaptureAudioDataOutput alloc] init];
-    [outputAudioDevice setSampleBufferDelegate:self queue:queue];
+//    AVCaptureAudioDataOutput *outputAudioDevice = [[AVCaptureAudioDataOutput alloc] init];
+//    [outputAudioDevice setSampleBufferDelegate:self queue:queue];
     
     // initialize capture session
     
     captureSession = [[AVCaptureSession alloc] init];
     
     [captureSession addInput:inputCameraDevice];
-    [captureSession addInput:inputMicrophoneDevice];
+//    [captureSession addInput:inputMicrophoneDevice];
     [captureSession addOutput:outputVideoDevice];
-    [captureSession addOutput:outputAudioDevice];
+//    [captureSession addOutput:outputAudioDevice];
     
     // begin configuration for the AVCaptureSession
     [captureSession beginConfiguration];
@@ -129,30 +109,21 @@
     [captureSession setSessionPreset:[NSString stringWithString:AVCaptureSessionPreset640x480]];
     
     connectionVideo = [outputVideoDevice connectionWithMediaType:AVMediaTypeVideo];
-    connectionAudio = [outputAudioDevice connectionWithMediaType:AVMediaTypeAudio];
-    [self setRelativeVideoOrientation];
-    
-    NSNotificationCenter* notify = [NSNotificationCenter defaultCenter];
-    
-    [notify addObserver:self
-               selector:@selector(statusBarOrientationDidChange:)
-                   name:@"StatusBarOrientationDidChange"
-                 object:nil];
-    
+//    connectionAudio = [outputAudioDevice connectionWithMediaType:AVMediaTypeAudio];
     
     [captureSession commitConfiguration];
-    
-    // make preview layer and add so that camera's view is displayed on screen
-    
-    previewLayer = [AVCaptureVideoPreviewLayer    layerWithSession:captureSession];
-    [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspect];
-    
-    previewLayer.frame = self.view.bounds;
 }
 
 - (void) startCamera
 {
-    [self.view.layer addSublayer:previewLayer];
+    // make preview layer and add so that camera's view is displayed on screen
+    
+    previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
+    [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    
+    previewLayer.frame = self.view.bounds;
+    
+    [self.preview.layer addSublayer:previewLayer];
     
     [captureSession startRunning];
     
@@ -175,7 +146,7 @@
 //
 //    // Open the file using POSIX as this is anyway a test application
 //    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
-
+    
     [rtsp connect:@"192.168.0.3" port:1935 stream:@"mpegts"];
     
     rtp_video.address = @"192.168.0.3";
@@ -196,32 +167,6 @@
 //    fileAACHandle = NULL;
 }
 
-- (void)statusBarOrientationDidChange:(NSNotification*)notification {
-    [self setRelativeVideoOrientation];
-}
-
-- (void)setRelativeVideoOrientation {
-    switch ([[UIDevice currentDevice] orientation]) {
-        case UIInterfaceOrientationPortrait:
-#if defined(__IPHONE_8_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
-        case UIInterfaceOrientationUnknown:
-#endif
-            connectionVideo.videoOrientation = AVCaptureVideoOrientationPortrait;
-            break;
-        case UIInterfaceOrientationPortraitUpsideDown:
-            connectionVideo.videoOrientation = AVCaptureVideoOrientationPortraitUpsideDown;
-            break;
-        case UIInterfaceOrientationLandscapeLeft:
-            connectionVideo.videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
-            break;
-        case UIInterfaceOrientationLandscapeRight:
-            connectionVideo.videoOrientation = AVCaptureVideoOrientationLandscapeRight;
-            break;
-        default:
-            break;
-    }
-}
-
 -(void) captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection
 {
     if(connection == connectionVideo)
@@ -229,11 +174,11 @@
 //        NSLog( @"frame captured at ");
         [h264Encoder encode:sampleBuffer];
     }
-    else if(connection == connectionAudio)
-    {
+//    else if(connection == connectionAudio)
+//    {
 //        NSLog( @"audio captured at ");
-        [aacEncoder encode:sampleBuffer];
-    }
+//        [aacEncoder encode:sampleBuffer];
+//    }
 }
 
 #pragma mark - RTSPClientDelegate
@@ -267,7 +212,7 @@
 - (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp
 {
 //    NSLog(@"gotH264EncodedData %d", (int)[data length]);
-    
+
 //    if (fileH264Handle != NULL)
 //    {
 //        [fileH264Handle writeData:data];
@@ -281,12 +226,12 @@
 - (void)gotAACEncodedData:(NSData*)data timestamp:(CMTime)timestamp error:(NSError*)error
 {
 //    NSLog(@"gotAACEncodedData %d", (int)[data length]);
-    
+
 //    if (fileAACHandle != NULL)
 //    {
 //        [fileAACHandle writeData:data];
 //    }
-    
+
 //    [rtp_audio publish:data timestamp:timestamp];
 }
 
