@@ -19,6 +19,8 @@
 
 @interface H264HWEncoder : NSObject
 
+- (void) invalidate;
+- (void) setOutputSize:(CGSize)size;
 - (void) encode:(CMSampleBufferRef )sampleBuffer;
 
 @property (weak, nonatomic) id<H264HWEncoderDelegate> delegate;

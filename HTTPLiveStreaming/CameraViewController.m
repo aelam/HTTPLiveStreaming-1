@@ -8,7 +8,7 @@
 
 #import "CameraViewController.h"
 #import "RTSPClient.h"
-#import "RTPClient.h"
+#import "TSClient.h"
 
 @interface CameraViewController () <RTSPClientDelegate>
 {
@@ -24,8 +24,7 @@
     AVCaptureConnection* connectionVideo;
     AVCaptureConnection* connectionAudio;
     RTSPClient *rtsp;
-    RTPClient *rtp_video;
-    RTPClient *rtp_audio;
+    TSClient *udp_ts;
 }
 @property (weak, nonatomic) IBOutlet UIButton *StartStopButton;
 @end
@@ -37,6 +36,7 @@
     // Do any additional setup after loading the view.
     
     h264Encoder = [[H264HWEncoder alloc] init];
+    [h264Encoder setOutputSize:CGSizeMake(360, 640)];
     h264Encoder.delegate = self;
     
     aacEncoder = [[AACEncoder alloc] init];
@@ -47,8 +47,7 @@
     rtsp = [[RTSPClient alloc] init];
     rtsp.delegate = self;
     
-    rtp_video = [[RTPClient alloc] init];
-    rtp_audio = [[RTPClient alloc] init];
+    udp_ts = [[TSClient alloc] init];
     
     [self initCamera];
 }
@@ -107,11 +106,10 @@
     NSDictionary* videoSettings = [NSDictionary dictionaryWithObject:val forKey:key];
     outputVideoDevice.videoSettings = videoSettings;
     
-    dispatch_queue_t queue = dispatch_queue_create("com.metapleasure.HTTPLiveStreaming", NULL);
-    [outputVideoDevice setSampleBufferDelegate:self queue:queue];
+    [outputVideoDevice setSampleBufferDelegate:self queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)];
     
     AVCaptureAudioDataOutput *outputAudioDevice = [[AVCaptureAudioDataOutput alloc] init];
-    [outputAudioDevice setSampleBufferDelegate:self queue:queue];
+    [outputAudioDevice setSampleBufferDelegate:self queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)];
     
     // initialize capture session
     
@@ -126,7 +124,7 @@
     [captureSession beginConfiguration];
     
     // picture resolution
-    [captureSession setSessionPreset:[NSString stringWithString:AVCaptureSessionPreset640x480]];
+    [captureSession setSessionPreset:[NSString stringWithString:AVCaptureSessionPreset1280x720]];
     
     connectionVideo = [outputVideoDevice connectionWithMediaType:AVMediaTypeVideo];
     connectionAudio = [outputAudioDevice connectionWithMediaType:AVMediaTypeAudio];
@@ -176,17 +174,15 @@
 //    // Open the file using POSIX as this is anyway a test application
 //    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
 
-    [rtsp connect:@"192.168.0.3" port:1935 stream:@"mpegts"];
+//    [rtsp connect:@"192.168.0.3" port:1935 instance:@"app" stream:@"mpegts.stream"];
     
-    rtp_video.address = @"192.168.0.3";
-    rtp_video.port = 10001; // This is an meanless information
-    
-    rtp_audio.address = @"192.168.0.3";
-    rtp_audio.port = 10000; // This is an meanless information
+    udp_ts.address = @"192.168.0.3";
+    udp_ts.port = 10000;
 }
 
 - (void) stopCamera
 {
+    [h264Encoder invalidate];
     [captureSession stopRunning];
     [previewLayer removeFromSuperlayer];
     [rtsp close];
@@ -252,14 +248,14 @@
     [rtsp close];
 }
 
-- (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSInteger)server_port
+- (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSNumber *)server_port
 {
-    rtp_audio.port = server_port; // We have use this port given from server
+    
 }
 
-- (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSInteger)server_port
+- (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSNumber *)server_port
 {
-    rtp_video.port = server_port; // We have use this port given from server
+    
 }
 
 #pragma mark -  H264HWEncoderDelegate declare
@@ -273,7 +269,7 @@
 //        [fileH264Handle writeData:data];
 //    }
     
-    [rtp_video publish:data timestamp:timestamp];
+    [udp_ts publish:data timestamp:timestamp];
 }
 
 #pragma mark - AACEncoderDelegate declare
@@ -287,7 +283,7 @@
 //        [fileAACHandle writeData:data];
 //    }
     
-//    [rtp_audio publish:data timestamp:timestamp];
+//    [udp_ts publish:data timestamp:timestamp];
 }
 
 @end

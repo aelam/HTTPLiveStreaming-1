@@ -14,19 +14,22 @@
 - (void)onRTSPDidConnectedOK:(RTSPClient *)rtsp;
 - (void)onRTSPDidConnectedFailed:(RTSPClient *)rtsp;
 - (void)onRTSPDidDisConnected:(RTSPClient *)rtsp;
-- (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSInteger)server_port;
-- (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSInteger)server_port;
+@optional
+- (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSNumber *)server_port;
+- (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSNumber *)server_port;
 @end
 
 @interface RTSPClient : NSObject
 
+@property (weak, nonatomic) NSString *host; // ip address
 @property (weak, nonatomic) NSString *address;
-@property (nonatomic) int32_t port;
+@property (nonatomic) NSInteger port;
+@property (weak, nonatomic) NSString *instance;
 @property (weak, nonatomic) NSString *streamName;
 @property (weak, nonatomic) NSString *sessionid;
 @property (weak, nonatomic) id<RTSPClientDelegate> delegate;
 
-- (void)connect:(NSString *)address port:(NSInteger)port stream:(NSString *)stream;
+- (void)connect:(NSString *)address port:(NSInteger)port instance:(NSString *)instance stream:(NSString *)stream;
 - (void)close;
 
 @end

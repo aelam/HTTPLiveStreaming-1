@@ -61,7 +61,9 @@
     
     OSStatus status = AudioConverterNewSpecific(&inAudioStreamBasicDescription, &outAudioStreamBasicDescription, 1, description, &_audioConverter);
     if (status != 0) {
-//        NSLog(@"setup converter: %d", (int)status);
+        UInt32 outputBitRate = 64000; // 64kbs
+        UInt32 propSize = sizeof(outputBitRate);
+        AudioConverterSetProperty(_audioConverter, kAudioConverterEncodeBitRate, propSize, &outputBitRate);
     }
 }
 

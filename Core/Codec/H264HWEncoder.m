@@ -15,13 +15,19 @@
 {
     NSData *sps;
     NSData *pps;
+    
+    VTCompressionSessionRef session;
+    CGSize outputSize;
 }
 
 - (void) dealloc {
+    [self invalidate];
 }
 
 - (id) init {
     if (self = [super init]) {
+        session = NULL;
+        outputSize = CGSizeMake(640, 360);
     }
     return self;
 }
@@ -35,7 +41,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         return [encoder didReceiveSampleBuffer:sampleBuffer];
     }
     
-    NSLog(@"Error: %@", [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil]);
+    NSLog(@"Error %d : %@", infoFlags, [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil]);
 }
 
 - (void)didReceiveSampleBuffer:(CMSampleBufferRef)sampleBuffer {
@@ -128,30 +134,110 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     }
 }
 
+- (void) setOutputSize:(CGSize)size
+{
+    outputSize = size;
+}
+
+- (void) initSession
+{
+    CFMutableDictionaryRef encoderSpecifications = NULL;
+    
+#if !TARGET_OS_IPHONE
+    /** iOS is always hardware-accelerated **/
+    CFStringRef key = kVTVideoEncoderSpecification_EncoderID;
+    CFStringRef value = CFSTR("com.apple.videotoolbox.videoencoder.h264.gva");
+    
+    CFStringRef bkey = kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder;
+    CFBooleanRef bvalue = kCFBooleanTrue;
+    
+    CFStringRef ckey = kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder;
+    CFBooleanRef cvalue = kCFBooleanTrue;
+    
+    encoderSpecifications = CFDictionaryCreateMutable(
+                                                      kCFAllocatorDefault,
+                                                      3,
+                                                      &kCFTypeDictionaryKeyCallBacks,
+                                                      &kCFTypeDictionaryValueCallBacks);
+    
+    CFDictionaryAddValue(encoderSpecifications, bkey, bvalue);
+    CFDictionaryAddValue(encoderSpecifications, ckey, cvalue);
+    CFDictionaryAddValue(encoderSpecifications, key, value);
+#endif
+    
+    OSStatus ret = VTCompressionSessionCreate(kCFAllocatorDefault, outputSize.width, outputSize.height, kCMVideoCodecType_H264, encoderSpecifications, NULL, NULL, didCompressH264, (__bridge void *)(self), &session);
+    if (ret == noErr) {
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_Baseline_3_0);
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_AspectRatio16x9, kCFBooleanTrue);
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxKeyFrameInterval, (__bridge CFTypeRef)@(90));
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxH264SliceBytes, (__bridge CFTypeRef)@(144));
+        
+#if !TARGET_OS_IPHONE
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, kCFBooleanTrue);
+#endif
+        
+        int bitrate = 600;
+        int v = bitrate;
+        CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
+        
+        OSStatus ret = VTSessionSetProperty(session, kVTCompressionPropertyKey_AverageBitRate, ref);
+        
+        CFRelease(ref);
+        ret = VTSessionCopyProperty(session, kVTCompressionPropertyKey_AverageBitRate, kCFAllocatorDefault, &ref);
+        
+        if(ret == noErr && ref) {
+            SInt32 br = 0;
+            
+            CFNumberGetValue(ref, kCFNumberSInt32Type, &br);
+            
+            bitrate = br;
+            CFRelease(ref);
+        } else {
+            bitrate = v;
+        }
+        v = 550 / 8;
+        CFNumberRef bytes = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
+        v = 1;
+        CFNumberRef duration = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
+        
+        CFMutableArrayRef limit = CFArrayCreateMutable(kCFAllocatorDefault, 2, &kCFTypeArrayCallBacks);
+        
+        CFArrayAppendValue(limit, bytes);
+        CFArrayAppendValue(limit, duration);
+        
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_DataRateLimits, limit);
+        CFRelease(bytes);
+        CFRelease(duration);
+        CFRelease(limit);
+        
+        VTCompressionSessionPrepareToEncodeFrames(session);
+    }
+}
+
+- (void) invalidate
+{
+    if(session)
+    {
+        VTCompressionSessionCompleteFrames(session, kCMTimeInvalid);
+        VTCompressionSessionInvalidate(session);
+        CFRelease(session);
+    }
+}
+
 - (void) encode:(CMSampleBufferRef )sampleBuffer
 {
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     
-    size_t width = CVPixelBufferGetWidth(imageBuffer);
-    size_t height = CVPixelBufferGetHeight(imageBuffer);
-    
-    VTCompressionSessionRef session;
-    OSStatus ret = VTCompressionSessionCreate(NULL, (int)width, (int)height, kCMVideoCodecType_H264, NULL, NULL, NULL, didCompressH264, (__bridge void *)(self), &session);
-    if (ret == noErr) {
-        VTSessionSetProperty(session, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
-        VTSessionSetProperty(session, kVTCompressionPropertyKey_ProfileLevel,kVTProfileLevel_H264_Baseline_3_0);
-        
-        // Create properties
-        CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-        
-        VTCompressionSessionEncodeFrame(session, imageBuffer, timestamp, kCMTimeInvalid, NULL, NULL, NULL);
-        VTCompressionSessionEndPass(session, false, NULL);
+    if(session == NULL)
+    {
+        [self initSession];
     }
     
-    if (session) {
-        VTCompressionSessionInvalidate(session);
-        CFRelease(session);
-    }
+    // Create properties
+    CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+    
+    VTCompressionSessionEncodeFrame(session, imageBuffer, timestamp, kCMTimeInvalid, NULL, NULL, NULL);
 }
 
 @end

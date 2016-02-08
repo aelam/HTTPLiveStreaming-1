@@ -7,29 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A81535471C677F920085E2FC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A81535461C677F920085E2FC /* AppDelegate.m */; };
-		A815354A1C677F920085E2FC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A81535491C677F920085E2FC /* main.m */; };
-		A815354D1C677F920085E2FC /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A815354C1C677F920085E2FC /* ViewController.m */; };
-		A81535501C677F920085E2FC /* HLSforOSX.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A815354E1C677F920085E2FC /* HLSforOSX.xcdatamodeld */; };
-		A81535521C677F930085E2FC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A81535511C677F930085E2FC /* Assets.xcassets */; };
-		A81535551C677F930085E2FC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A81535531C677F930085E2FC /* Main.storyboard */; };
 		A81536231C6790230085E2FC /* AACEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536161C6790230085E2FC /* AACEncoder.m */; };
-		A81536241C6790230085E2FC /* AACEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536161C6790230085E2FC /* AACEncoder.m */; };
 		A81536251C6790230085E2FC /* H264HWDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536181C6790230085E2FC /* H264HWDecoder.m */; };
-		A81536261C6790230085E2FC /* H264HWDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536181C6790230085E2FC /* H264HWDecoder.m */; };
 		A81536271C6790230085E2FC /* H264HWEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361A1C6790230085E2FC /* H264HWEncoder.m */; };
-		A81536281C6790230085E2FC /* H264HWEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361A1C6790230085E2FC /* H264HWEncoder.m */; };
-		A81536291C6790230085E2FC /* RTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361D1C6790230085E2FC /* RTPClient.m */; };
-		A815362A1C6790230085E2FC /* RTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361D1C6790230085E2FC /* RTPClient.m */; };
+		A81536291C6790230085E2FC /* TSClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361D1C6790230085E2FC /* TSClient.m */; };
 		A815362D1C6790230085E2FC /* RTSPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536221C6790230085E2FC /* RTSPClient.m */; };
-		A815362E1C6790230085E2FC /* RTSPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536221C6790230085E2FC /* RTSPClient.m */; };
 		A815363F1C6795A00085E2FC /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A815363A1C6795930085E2FC /* CocoaAsyncSocket.framework */; };
 		A81536401C6795A00085E2FC /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A815363A1C6795930085E2FC /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A81536491C6799BB0085E2FC /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A815363C1C6795930085E2FC /* CocoaAsyncSocket.framework */; };
-		A815364A1C6799BB0085E2FC /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A815363C1C6795930085E2FC /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A81536511C6799D30085E2FC /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A815364E1C6799D30085E2FC /* AudioToolbox.framework */; };
-		A81536521C6799D30085E2FC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A815364F1C6799D30085E2FC /* AVFoundation.framework */; };
-		A81536531C6799D30085E2FC /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A81536501C6799D30085E2FC /* VideoToolbox.framework */; };
 		A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAEFE1C3B49CB000229C3 /* main.m */; };
 		A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF011C3B49CB000229C3 /* AppDelegate.m */; };
 		A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF041C3B49CB000229C3 /* AAPLPlayerViewController.m */; };
@@ -74,13 +58,6 @@
 			remoteGlobalIDString = 6CD9900F1B77868C0011A685;
 			remoteInfo = "iOS CocoaAsyncSocket";
 		};
-		A815364B1C6799BB0085E2FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A81536331C6795930085E2FC /* CocoaAsyncSocket.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9FC41F121B9D965000578BEB;
-			remoteInfo = "Mac CocoaAsyncSocket";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -95,46 +72,22 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A815364D1C6799BB0085E2FC /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A815364A1C6799BB0085E2FC /* CocoaAsyncSocket.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4CE969D12709BFF791B48C23 /* Pods-HLSforOSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HLSforOSX.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HLSforOSX/Pods-HLSforOSX.debug.xcconfig"; sourceTree = "<group>"; };
 		7E2F76008262B037A7144E6F /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		A81535431C677F920085E2FC /* HLSforOSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HLSforOSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A81535451C677F920085E2FC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		A81535461C677F920085E2FC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		A81535491C677F920085E2FC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		A815354B1C677F920085E2FC /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		A815354C1C677F920085E2FC /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		A815354F1C677F920085E2FC /* HLSforOSX.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HLSforOSX.xcdatamodel; sourceTree = "<group>"; };
-		A81535511C677F930085E2FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A81535541C677F930085E2FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		A81535561C677F930085E2FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A81536151C6790230085E2FC /* AACEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AACEncoder.h; sourceTree = "<group>"; };
 		A81536161C6790230085E2FC /* AACEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AACEncoder.m; sourceTree = "<group>"; };
 		A81536171C6790230085E2FC /* H264HWDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H264HWDecoder.h; sourceTree = "<group>"; };
 		A81536181C6790230085E2FC /* H264HWDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = H264HWDecoder.m; sourceTree = "<group>"; };
 		A81536191C6790230085E2FC /* H264HWEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H264HWEncoder.h; sourceTree = "<group>"; };
 		A815361A1C6790230085E2FC /* H264HWEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = H264HWEncoder.m; sourceTree = "<group>"; };
-		A815361C1C6790230085E2FC /* RTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTPClient.h; sourceTree = "<group>"; };
-		A815361D1C6790230085E2FC /* RTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTPClient.m; sourceTree = "<group>"; };
+		A815361C1C6790230085E2FC /* TSClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSClient.h; sourceTree = "<group>"; };
+		A815361D1C6790230085E2FC /* TSClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSClient.m; sourceTree = "<group>"; };
 		A81536211C6790230085E2FC /* RTSPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTSPClient.h; sourceTree = "<group>"; };
 		A81536221C6790230085E2FC /* RTSPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTSPClient.m; sourceTree = "<group>"; };
 		A81536331C6795930085E2FC /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
-		A815364E1C6799D30085E2FC /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
-		A815364F1C6799D30085E2FC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
-		A81536501C6799D30085E2FC /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPLiveStreaming.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BCAEFE1C3B49CB000229C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A8BCAF001C3B49CB000229C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -159,17 +112,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A81535401C677F920085E2FC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A81536511C6799D30085E2FC /* AudioToolbox.framework in Frameworks */,
-				A81536521C6799D30085E2FC /* AVFoundation.framework in Frameworks */,
-				A81536531C6799D30085E2FC /* VideoToolbox.framework in Frameworks */,
-				A81536491C6799BB0085E2FC /* CocoaAsyncSocket.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A8BCAEF71C3B49CB000229C3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -193,31 +135,6 @@
 				D7674F0CE54023DF7A8FADE2 /* Pods-HLSforOSX.release.xcconfig */,
 			);
 			name = Pods;
-			sourceTree = "<group>";
-		};
-		A81535441C677F920085E2FC /* HLSforOSX */ = {
-			isa = PBXGroup;
-			children = (
-				A81535451C677F920085E2FC /* AppDelegate.h */,
-				A81535461C677F920085E2FC /* AppDelegate.m */,
-				A815354B1C677F920085E2FC /* ViewController.h */,
-				A815354C1C677F920085E2FC /* ViewController.m */,
-				A81535511C677F930085E2FC /* Assets.xcassets */,
-				A81535531C677F930085E2FC /* Main.storyboard */,
-				A81535561C677F930085E2FC /* Info.plist */,
-				A815354E1C677F920085E2FC /* HLSforOSX.xcdatamodeld */,
-				EE8B5794CC8D43BDBC9D2F95 /* Frameworks */,
-				A81535481C677F920085E2FC /* Supporting Files */,
-			);
-			path = HLSforOSX;
-			sourceTree = "<group>";
-		};
-		A81535481C677F920085E2FC /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				A81535491C677F920085E2FC /* main.m */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		A81535651C67809D0085E2FC /* Frameworks */ = {
@@ -263,7 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				A81536141C6790230085E2FC /* Codec */,
-				A815361B1C6790230085E2FC /* RTP */,
+				A815361B1C6790230085E2FC /* MPEG2-TS */,
 				A81536201C6790230085E2FC /* RTSP */,
 			);
 			path = Core;
@@ -282,12 +199,13 @@
 			path = Codec;
 			sourceTree = "<group>";
 		};
-		A815361B1C6790230085E2FC /* RTP */ = {
+		A815361B1C6790230085E2FC /* MPEG2-TS */ = {
 			isa = PBXGroup;
 			children = (
-				A815361C1C6790230085E2FC /* RTPClient.h */,
-				A815361D1C6790230085E2FC /* RTPClient.m */,
+				A815361C1C6790230085E2FC /* TSClient.h */,
+				A815361D1C6790230085E2FC /* TSClient.m */,
 			);
+			name = "MPEG2-TS";
 			path = RTP;
 			sourceTree = "<group>";
 		};
@@ -316,7 +234,6 @@
 				A81536331C6795930085E2FC /* CocoaAsyncSocket.xcodeproj */,
 				A81536131C6790230085E2FC /* Core */,
 				A8BCAEFC1C3B49CB000229C3 /* HTTPLiveStreaming */,
-				A81535441C677F920085E2FC /* HLSforOSX */,
 				A8BCAEFB1C3B49CB000229C3 /* Products */,
 				A550C347E8B031626E7E2CF4 /* Pods */,
 			);
@@ -326,7 +243,6 @@
 			isa = PBXGroup;
 			children = (
 				A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */,
-				A81535431C677F920085E2FC /* HLSforOSX.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -357,39 +273,9 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		EE8B5794CC8D43BDBC9D2F95 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				A815364E1C6799D30085E2FC /* AudioToolbox.framework */,
-				A815364F1C6799D30085E2FC /* AVFoundation.framework */,
-				A81536501C6799D30085E2FC /* VideoToolbox.framework */,
-			);
-			name = Frameworks;
-			path = ..;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A81535421C677F920085E2FC /* HLSforOSX */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A81535571C677F930085E2FC /* Build configuration list for PBXNativeTarget "HLSforOSX" */;
-			buildPhases = (
-				A815353F1C677F920085E2FC /* Sources */,
-				A81535401C677F920085E2FC /* Frameworks */,
-				A81535411C677F920085E2FC /* Resources */,
-				A815364D1C6799BB0085E2FC /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				A815364C1C6799BB0085E2FC /* PBXTargetDependency */,
-			);
-			name = HLSforOSX;
-			productName = HLSforOSX;
-			productReference = A81535431C677F920085E2FC /* HLSforOSX.app */;
-			productType = "com.apple.product-type.application";
-		};
 		A8BCAEF91C3B49CB000229C3 /* HTTPLiveStreaming */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A8BCAF111C3B49CB000229C3 /* Build configuration list for PBXNativeTarget "HTTPLiveStreaming" */;
@@ -418,9 +304,6 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = Metapleasure;
 				TargetAttributes = {
-					A81535421C677F920085E2FC = {
-						CreatedOnToolsVersion = 7.2.1;
-					};
 					A8BCAEF91C3B49CB000229C3 = {
 						CreatedOnToolsVersion = 7.2;
 						SystemCapabilities = {
@@ -451,7 +334,6 @@
 			projectRoot = "";
 			targets = (
 				A8BCAEF91C3B49CB000229C3 /* HTTPLiveStreaming */,
-				A81535421C677F920085E2FC /* HLSforOSX */,
 			);
 		};
 /* End PBXProject section */
@@ -481,15 +363,6 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A81535411C677F920085E2FC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A81535521C677F930085E2FC /* Assets.xcassets in Resources */,
-				A81535551C677F930085E2FC /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A8BCAEF81C3B49CB000229C3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -505,29 +378,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A815353F1C677F920085E2FC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A81536281C6790230085E2FC /* H264HWEncoder.m in Sources */,
-				A815354D1C677F920085E2FC /* ViewController.m in Sources */,
-				A81536261C6790230085E2FC /* H264HWDecoder.m in Sources */,
-				A815362A1C6790230085E2FC /* RTPClient.m in Sources */,
-				A815354A1C677F920085E2FC /* main.m in Sources */,
-				A81535501C677F920085E2FC /* HLSforOSX.xcdatamodeld in Sources */,
-				A81536241C6790230085E2FC /* AACEncoder.m in Sources */,
-				A81535471C677F920085E2FC /* AppDelegate.m in Sources */,
-				A815362E1C6790230085E2FC /* RTSPClient.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A8BCAEF61C3B49CB000229C3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */,
 				A815362D1C6790230085E2FC /* RTSPClient.m in Sources */,
-				A81536291C6790230085E2FC /* RTPClient.m in Sources */,
+				A81536291C6790230085E2FC /* TSClient.m in Sources */,
 				A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */,
 				A8BCAF211C3B8F08000229C3 /* AAPLPlayerView.m in Sources */,
 				A8BCAF3B1C3E05D0000229C3 /* CameraViewController.m in Sources */,
@@ -546,22 +403,9 @@
 			name = "iOS CocoaAsyncSocket";
 			targetProxy = A81536411C6795A00085E2FC /* PBXContainerItemProxy */;
 		};
-		A815364C1C6799BB0085E2FC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Mac CocoaAsyncSocket";
-			targetProxy = A815364B1C6799BB0085E2FC /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		A81535531C677F930085E2FC /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A81535541C677F930085E2FC /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		A8BCAF061C3B49CB000229C3 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -597,54 +441,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		A81535581C677F930085E2FC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4CE969D12709BFF791B48C23 /* Pods-HLSforOSX.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug-iphoneos/Pods-HTTPLiveStreaming",
-				);
-				INFOPLIST_FILE = HLSforOSX/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug-iphoneos",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				PRODUCT_BUNDLE_IDENTIFIER = per.whiteblue3.HLSforOSX;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		A81535591C677F930085E2FC /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D7674F0CE54023DF7A8FADE2 /* Pods-HLSforOSX.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug-iphoneos/Pods-HTTPLiveStreaming",
-				);
-				INFOPLIST_FILE = HLSforOSX/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/Debug-iphoneos",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				PRODUCT_BUNDLE_IDENTIFIER = per.whiteblue3.HLSforOSX;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
 		A8BCAF0F1C3B49CB000229C3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -770,15 +566,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A81535571C677F930085E2FC /* Build configuration list for PBXNativeTarget "HLSforOSX" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A81535581C677F930085E2FC /* Debug */,
-				A81535591C677F930085E2FC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		A8BCAEF51C3B49CB000229C3 /* Build configuration list for PBXProject "HTTPLiveStreaming" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -798,19 +585,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		A815354E1C677F920085E2FC /* HLSforOSX.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				A815354F1C677F920085E2FC /* HLSforOSX.xcdatamodel */,
-			);
-			currentVersion = A815354F1C677F920085E2FC /* HLSforOSX.xcdatamodel */;
-			path = HLSforOSX.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = A8BCAEF21C3B49CB000229C3 /* Project object */;
 }

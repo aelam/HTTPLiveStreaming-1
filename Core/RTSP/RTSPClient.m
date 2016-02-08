@@ -23,17 +23,19 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     SEQ_TEARDOWN
 };
 
-#define RTP_PORT    10000
+#define UDP_PORT    10000
 
-@interface RTSPClient() <AsyncSocketDelegate>
+@interface RTSPClient() <GCDAsyncSocketDelegate>
 {
     int cseq;
     
-    AsyncSocket *socket_rtsp;
+    GCDAsyncSocket *socket_rtsp;
     
     RTSP_SEQ rtspSeq;
     
     NSMutableData *readBuffer;
+    
+    dispatch_queue_t queue;
 }
 
 - (void)sendMessage:(NSData *)data tag:(long)tag;
@@ -50,7 +52,8 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     {
         cseq = 0;
         
-        socket_rtsp = [[AsyncSocket alloc] initWithDelegate:self];
+        queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+        socket_rtsp = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:queue];
         rtspSeq = SEQ_IDLE;
         self.sessionid = nil;
         self.address = nil;
@@ -67,19 +70,20 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 #pragma mark - Connection Handshake
 
-- (void)connect:(NSString *)address port:(NSInteger)port stream:(NSString *)stream
+- (void)connect:(NSString *)address port:(NSInteger)port instance:(NSString *)instance stream:(NSString *)stream
 {
     self.address = address;
     self.port = port;
+    self.instance = instance;
     self.streamName = stream;
     
     self.sessionid = nil;
     readBuffer = nil;
     readBuffer = [[NSMutableData alloc] init];
     
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(queue, ^{
         NSError *error;
-        [socket_rtsp connectToHost:address onPort:port withTimeout:-1 error:&error];
+        [socket_rtsp connectToHost:address onPort:port error:&error];
         if(error != nil)
         {
             NSLog(@"%@", [error localizedDescription]);
@@ -94,7 +98,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 - (void)close
 {
     rtspSeq = SEQ_IDLE;
-    [socket_rtsp disconnect];
+    [socket_rtsp disconnectAfterReadingAndWriting];
     readBuffer = nil;
     self.sessionid = nil;
     self.address = nil;
@@ -160,27 +164,79 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     return addr ? addr : @"0.0.0.0";
 }
 
+- (NSString *)getPublicIP {
+    // Get the external IP Address based on dynsns.org
+    NSError *error = nil;
+    NSString *theIpHtml = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://www.dyndns.org/cgi-bin/check_ip.cgi"]
+                                                   encoding:NSUTF8StringEncoding
+                                                      error:&error];
+    if (!error) {
+        NSUInteger  an_Integer;
+        NSArray *ipItemsArray;
+        NSString *externalIP;
+        NSScanner *theScanner;
+        NSString *text = nil;
+        
+        theScanner = [NSScanner scannerWithString:theIpHtml];
+        
+        while ([theScanner isAtEnd] == NO) {
+            
+            // find start of tag
+            [theScanner scanUpToString:@"<" intoString:NULL] ;
+            
+            // find end of tag
+            [theScanner scanUpToString:@">" intoString:&text] ;
+            
+            // replace the found tag with a space
+            //(you can filter multi-spaces out later if you wish)
+            theIpHtml = [theIpHtml stringByReplacingOccurrencesOfString:
+                         [ NSString stringWithFormat:@"%@>", text]
+                                                             withString:@" "] ;
+            ipItemsArray = [theIpHtml  componentsSeparatedByString:@" "];
+            an_Integer = [ipItemsArray indexOfObject:@"Address:"];
+            externalIP =[ipItemsArray objectAtIndex:++an_Integer];
+        }
+        // Check that you get something back
+        if (externalIP == nil || externalIP.length <= 0) {
+            // Error, no address found
+            return nil;
+        }
+        // Return External IP
+        return externalIP;
+    } else {
+        // Error, no address found
+        return nil;
+    }
+}
+
 - (void)sendANNOUNCE
 {
-    NSString *myip = [self getIPAddress];
+    NSString *myip = @"127.0.0.1";
+#if TARGET_OS_IPHONE
+    myip = [self getIPAddress];
+#else
+//    NSLog(@"%@", [[NSHost currentHost] addresses]);
+    myip = [[[NSHost currentHost] addresses] objectAtIndex:1];
+#endif
     
     NSString* session = @"v=0\r\n";
     session = [session stringByAppendingFormat:@"o=- 0 0 IN IP4 %@\r\n", myip];
-    session = [session stringByAppendingFormat:@"s=MPEGTS\r\n"];
+    session = [session stringByAppendingFormat:@"s=%@\r\n", self.streamName];
     session = [session stringByAppendingFormat:@"c=IN IP4 %@\r\n", myip];
     session = [session stringByAppendingFormat:@"t=0 0\r\n"];
-    session = [session stringByAppendingFormat:@"a=tool:HTTPLiveStreaming\r\n"];
-    session = [session stringByAppendingFormat:@"m=audio %d RTP/AVP 96\r\n", RTP_PORT];
-    session = [session stringByAppendingFormat:@"a=rtpmap:96 MP4A-LATM/24000/2\r\n"];
-    session = [session stringByAppendingFormat:@"a=fmtp:96 profile-level-id=1; bitrate=64000;cpresent=0;object=2;config=400026203fc0\r\n"];
+    session = [session stringByAppendingFormat:@"m=video %d RTP/AVP 98\r\n", UDP_PORT];
+    session = [session stringByAppendingFormat:@"a=sendonly\r\n"];
+    session = [session stringByAppendingFormat:@"a=rtpmap:98 H264/90000\r\n"];
+    session = [session stringByAppendingFormat:@"a=fmtp:98 packetization-mode=0;\r\n"];
     session = [session stringByAppendingFormat:@"a=control:trackID=0\r\n"];
-    session = [session stringByAppendingFormat:@"m=video %d RTP/AVP 96\r\n", RTP_PORT + 1];
-    session = [session stringByAppendingFormat:@"a=rtpmap:96 H264/90000\r\n"];
-    session = [session stringByAppendingFormat:@"a=fmtp:96 packetization-mode=2;profile-level-id=42A01E;sprop-parameter-sets=Z0IAKOkBQHsg,aM4xUg==;\r\n"];
+    session = [session stringByAppendingFormat:@"m=audio %d RTP/AVP 97\r\n", UDP_PORT];
+    session = [session stringByAppendingFormat:@"a=sendonly\r\n"];
+    session = [session stringByAppendingFormat:@"a=rtpmap:97 MPEG4-GENERIC/44100/2\r\n"];
+    session = [session stringByAppendingFormat:@"a=fmtp:97 profile-level-id=1; mode=AAC-lbr; bitrate=64000\r\n"];
     session = [session stringByAppendingFormat:@"a=control:trackID=1\r\n"];
     session = [session stringByAppendingFormat:@"\r\n"];
     
-    NSString* rtpHeader = [NSString stringWithFormat:@"ANNOUNCE %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%d/live/%@", self.address, self.port, self.streamName]];
+    NSString* rtpHeader = [NSString stringWithFormat:@"ANNOUNCE %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@/%@", self.address, (long)self.port, self.instance, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
     if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Type: application/sdp\r\n"];
@@ -195,12 +251,15 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)sendSETUPAudio
 {
-    NSString* rtpHeader = [NSString stringWithFormat:@"SETUP %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%d/live/%@/trackID=0", self.address, self.port, self.streamName]];
+    NSString* session = @"";
+    
+    NSString* rtpHeader = [NSString stringWithFormat:@"SETUP %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@/%@/trackID=1", self.address, (long)self.port, self.instance, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
     if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP/UDP;unicast;client_port=%d\r\n", RTP_PORT];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Length: 0\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP/UDP;unicast;client_port=%d\r\n", UDP_PORT];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Length: %lu\r\n", (unsigned long)[session length]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingString:session];
     NSLog(@"%@", rtpHeader);
     rtspSeq = SEQ_SETUP_AUDIO;
     [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_SETUP_AUDIO];
@@ -208,12 +267,15 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)sendSETUPVideo
 {
-    NSString* rtpHeader = [NSString stringWithFormat:@"SETUP %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%d/live/%@/trackID=1", self.address, self.port, self.streamName]];
+    NSString* session = @"";
+    
+    NSString* rtpHeader = [NSString stringWithFormat:@"SETUP %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@/%@/trackID=0", self.address, (long)self.port, self.instance, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
     if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP/UDP;unicast;client_port=%d\r\n", RTP_PORT+1];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Length: 0\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP/UDP;unicast;client_port=%d\r\n", UDP_PORT];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Length: %lu\r\n", (unsigned long)[session length]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
+    rtpHeader = [rtpHeader stringByAppendingString:session];
     NSLog(@"%@", rtpHeader);
     rtspSeq = SEQ_SETUP_VIDEO;
     [self sendMessage:[rtpHeader dataUsingEncoding:NSUTF8StringEncoding] tag:SEQ_SETUP_VIDEO];
@@ -221,7 +283,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)sendRECORD
 {
-    NSString* rtpHeader = [NSString stringWithFormat:@"RECORD %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%d/live/%@", self.address, self.port, self.streamName]];
+    NSString* rtpHeader = [NSString stringWithFormat:@"RECORD %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@/%@", self.address, (long)self.port, self.instance, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
     if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"Range: npt=now-\r\n"];
@@ -234,7 +296,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 
 - (void)sendTEARDOWN
 {
-    NSString* rtpHeader = [NSString stringWithFormat:@"TEARDOWN %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%d/live/%@", self.address, self.port, self.streamName]];
+    NSString* rtpHeader = [NSString stringWithFormat:@"TEARDOWN %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@/%@", self.address, (long)self.port, self.instance, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
     if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
@@ -352,7 +414,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             if(is200OK)
             {
                 readBuffer = [[NSMutableData alloc] init];
-                [self performSelector:@selector(sendSETUPAudio)];
+                [self performSelector:@selector(sendSETUPVideo)];
             }
         }
     }
@@ -373,9 +435,9 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             BOOL is200OK = NO;
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
-                if(self.delegate != nil && [self.delegate respondsToSelector:@selector(onRTSP:didSETUP_AUDIOWithServerPort:)] && [self getServerPort:bufferString] >= 0)
+                if(self.delegate != nil && [self.delegate respondsToSelector:@selector(onRTSP:didSETUP_AUDIOWithServerPort:)] && [self getServerPort:bufferString] > 0)
                 {
-                    [self.delegate onRTSP:self didSETUP_AUDIOWithServerPort:[self getServerPort:bufferString]];
+                    [self.delegate performSelector:@selector(onRTSP:didSETUP_AUDIOWithServerPort:) withObject:self withObject:[NSNumber numberWithInteger:[self getServerPort:bufferString]]];
                 }
                 if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
                 is200OK = YES;
@@ -389,7 +451,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             if(is200OK)
             {
                 readBuffer = [[NSMutableData alloc] init];
-                [self performSelector:@selector(sendSETUPVideo)];
+                [self performSelector:@selector(sendRECORD)];
             }
         }
     }
@@ -410,9 +472,9 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             BOOL is200OK = NO;
             if([bufferString containsString:@"RTSP/1.0 200 OK\r\n"])
             {
-                if(self.delegate != nil && [self.delegate respondsToSelector:@selector(onRTSP:didSETUP_VIDEOWithServerPort:)] && [self getServerPort:bufferString] >= 0)
+                if(self.delegate != nil && [self.delegate respondsToSelector:@selector(onRTSP:didSETUP_VIDEOWithServerPort:)] && [self getServerPort:bufferString] > 0)
                 {
-                    [self.delegate onRTSP:self didSETUP_VIDEOWithServerPort:[self getServerPort:bufferString]];
+                    [self.delegate performSelector:@selector(onRTSP:didSETUP_VIDEOWithServerPort:) withObject:self withObject:[NSNumber numberWithInteger:[self getServerPort:bufferString]]];
                 }
                 if(self.sessionid == nil) [self getRTSPSessionID:bufferString];
                 is200OK = YES;
@@ -459,35 +521,32 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             rtspSeq = SEQ_PUBLISH;
             if(self.delegate != nil && [self.delegate respondsToSelector:@selector(onRTSPDidConnectedOK:)])
             {
-                [self.delegate onRTSPDidConnectedOK:self];
+                [self.delegate performSelector:@selector(onRTSPDidConnectedOK:) withObject:self];
             }
         }
     }
 }
 
-#pragma mark - AsyncSocketDelegate
+#pragma mark - GCDAsyncSocketDelegate
 
-- (void)onSocket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err {
-    NSLog(@"Disconnecting. Error: %@", [err localizedDescription]);
-}
-
-- (void)onSocketDidDisconnect:(AsyncSocket *)sock {
-    NSLog(@"Disconnected.");
+- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
+    NSLog(@"Disconnected : %@", err);
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(onRTSPDidDisConnected:)])
     {
         [self.delegate onRTSPDidDisConnected:self];
     }
 }
 
-- (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port {
+- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port {
     NSLog(@"Connected To %@:%i.", host, port);
+    self.host = host;
     
     rtspSeq = SEQ_ANNOUNCE;
     [socket_rtsp readDataToData:[AsyncSocket CRLFData] withTimeout:-1 tag:rtspSeq];
     [self sendANNOUNCE];
 }
 
-- (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
+- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
     [self messageReceived:data tag:tag];
     [socket_rtsp readDataToData:[AsyncSocket CRLFData] withTimeout:-1 tag:tag];
 }
