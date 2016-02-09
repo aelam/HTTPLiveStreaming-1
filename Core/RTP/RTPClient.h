@@ -1,5 +1,5 @@
 //
-//  TSClient.h
+//  RTPClient.h
 //  HTTPLiveStreaming
 //
 //  Created by Byeongwook Park on 2016. 1. 14..
@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CoreMedia.h>
 
-@interface TSClient : NSObject
+@interface RTPClient : NSObject
 
 @property (weak, nonatomic) NSString *address;
 @property (nonatomic) NSInteger port;
 
-- (void)publish:(NSData *)data timestamp:(CMTime)timestamp;
+- (void)publish:(NSData *)data timestamp:(CMTime)timestamp payloadType:(NSInteger)payloadType;
 
 @end

@@ -8,7 +8,7 @@
 
 #import "CameraViewController.h"
 #import "RTSPClient.h"
-#import "TSClient.h"
+#import "RTPClient.h"
 
 @interface CameraViewController () <RTSPClientDelegate>
 {
@@ -24,7 +24,7 @@
     AVCaptureConnection* connectionVideo;
     AVCaptureConnection* connectionAudio;
     RTSPClient *rtsp;
-    TSClient *udp_ts;
+    RTPClient *rtp;
 }
 @property (weak, nonatomic) IBOutlet UIButton *StartStopButton;
 @end
@@ -47,7 +47,7 @@
     rtsp = [[RTSPClient alloc] init];
     rtsp.delegate = self;
     
-    udp_ts = [[TSClient alloc] init];
+    rtp = [[RTPClient alloc] init];
     
     [self initCamera];
 }
@@ -176,8 +176,8 @@
 
 //    [rtsp connect:@"192.168.0.3" port:1935 instance:@"app" stream:@"mpegts.stream"];
     
-    udp_ts.address = @"192.168.0.3";
-    udp_ts.port = 10000;
+    rtp.address = @"192.168.0.3";
+    rtp.port = 10000;
 }
 
 - (void) stopCamera
@@ -269,7 +269,7 @@
 //        [fileH264Handle writeData:data];
 //    }
     
-    [udp_ts publish:data timestamp:timestamp];
+    [rtp publish:data timestamp:timestamp payloadType:98];
 }
 
 #pragma mark - AACEncoderDelegate declare
@@ -283,7 +283,7 @@
 //        [fileAACHandle writeData:data];
 //    }
     
-//    [udp_ts publish:data timestamp:timestamp];
+//    [udp_ts publish:data timestamp:timestamp payloadType:96];
 }
 
 @end
