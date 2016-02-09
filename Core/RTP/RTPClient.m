@@ -59,30 +59,28 @@ struct rtp_header {
 
 - (void)publish:(NSData *)data timestamp:(CMTime)timestamp payloadType:(NSInteger)payloadType
 {
-    dispatch_async(queue, ^{
-        int32_t t = ((float)timestamp.value / timestamp.timescale) * 1000;
-        
-        struct rtp_header header;
-        
-        //fill the header array of byte with RTP header fields
-        header.v = 2;
-        header.p = 0;
-        header.x = 0;
-        header.cc = 0;
-        header.m = 0;
-        header.pt = payloadType;
-        header.seq = seqNum;
-        header.ts = t;
-        header.ssrc = (u_int32_t)self.port;
-        
-        /* send RTP stream packet */
-        NSMutableData *packet = [NSMutableData dataWithBytes:&header length:12];
-        [packet appendData:data];
-        
-        [socket_rtp sendData:(NSData *)packet toHost:self.address port:self.port withTimeout:-1 tag:0];
-        
-        seqNum++;
-    });
+    int32_t t = ((float)timestamp.value / timestamp.timescale) * 1000;
+    
+    struct rtp_header header;
+    
+    //fill the header array of byte with RTP header fields
+    header.v = 2;
+    header.p = 0;
+    header.x = 0;
+    header.cc = 0;
+    header.m = 0;
+    header.pt = payloadType;
+    header.seq = seqNum;
+    header.ts = t;
+    header.ssrc = (u_int32_t)self.port;
+    
+    /* send RTP stream packet */
+    NSMutableData *packet = [NSMutableData dataWithBytes:&header length:12];
+    [packet appendData:data];
+    
+    [socket_rtp sendData:(NSData *)packet toHost:self.address port:self.port withTimeout:-1 tag:0];
+    
+    seqNum++;
 }
 
 @end

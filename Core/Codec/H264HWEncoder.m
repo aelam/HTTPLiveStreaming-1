@@ -171,12 +171,13 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         VTSessionSetProperty(session, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_Baseline_3_0);
         VTSessionSetProperty(session, kVTCompressionPropertyKey_AspectRatio16x9, kCFBooleanTrue);
         VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxKeyFrameInterval, (__bridge CFTypeRef)@(90));
-        VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxH264SliceBytes, (__bridge CFTypeRef)@(144));
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxH264SliceBytes, (__bridge CFTypeRef)@(184));
         
 #if !TARGET_OS_IPHONE
         VTSessionSetProperty(session, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, kCFBooleanTrue);
 #endif
         
+#if TARGET_OS_IPHONE
         int bitrate = 600;
         int v = bitrate;
         CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
@@ -196,7 +197,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         } else {
             bitrate = v;
         }
-        v = 550 / 8;
+        v = 800 / 8;
         CFNumberRef bytes = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
         v = 1;
         CFNumberRef duration = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
@@ -210,6 +211,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         CFRelease(bytes);
         CFRelease(duration);
         CFRelease(limit);
+#endif
         
         VTCompressionSessionPrepareToEncodeFrames(session);
     }
@@ -234,10 +236,13 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         [self initSession];
     }
     
-    // Create properties
-    CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-    
-    VTCompressionSessionEncodeFrame(session, imageBuffer, timestamp, kCMTimeInvalid, NULL, NULL, NULL);
+    if( session != NULL && sampleBuffer != NULL )
+    {
+        // Create properties
+        CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+        
+        VTCompressionSessionEncodeFrame(session, imageBuffer, timestamp, kCMTimeInvalid, NULL, NULL, NULL);
+    }
 }
 
 @end

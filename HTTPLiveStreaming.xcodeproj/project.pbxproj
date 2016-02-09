@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A81536231C6790230085E2FC /* AACEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536161C6790230085E2FC /* AACEncoder.m */; };
 		A81536251C6790230085E2FC /* H264HWDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536181C6790230085E2FC /* H264HWDecoder.m */; };
 		A81536271C6790230085E2FC /* H264HWEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361A1C6790230085E2FC /* H264HWEncoder.m */; };
 		A81536291C6790230085E2FC /* RTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361D1C6790230085E2FC /* RTPClient.m */; };
@@ -26,9 +25,10 @@
 		A8B0EFCB1C69A3440019EB1B /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A815363C1C6795930085E2FC /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A8B0EFD01C69A3B10019EB1B /* H264HWDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536181C6790230085E2FC /* H264HWDecoder.m */; };
 		A8B0EFD11C69A3B10019EB1B /* H264HWEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361A1C6790230085E2FC /* H264HWEncoder.m */; };
-		A8B0EFD21C69A3B10019EB1B /* AACEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536161C6790230085E2FC /* AACEncoder.m */; };
 		A8B0EFD31C69A3B10019EB1B /* RTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361D1C6790230085E2FC /* RTPClient.m */; };
 		A8B0EFD41C69A3B10019EB1B /* RTSPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536221C6790230085E2FC /* RTSPClient.m */; };
+		A8B0EFD61C69B99E0019EB1B /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8B0EFD51C69B99E0019EB1B /* CoreAudio.framework */; };
+		A8B0EFD91C69C4080019EB1B /* AACEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B0EFD81C69C4070019EB1B /* AACEncoder.m */; };
 		A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAEFE1C3B49CB000229C3 /* main.m */; };
 		A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF011C3B49CB000229C3 /* AppDelegate.m */; };
 		A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF041C3B49CB000229C3 /* AAPLPlayerViewController.m */; };
@@ -110,8 +110,6 @@
 /* Begin PBXFileReference section */
 		4CE969D12709BFF791B48C23 /* Pods-HLSforOSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HLSforOSX.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HLSforOSX/Pods-HLSforOSX.debug.xcconfig"; sourceTree = "<group>"; };
 		7E2F76008262B037A7144E6F /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		A81536151C6790230085E2FC /* AACEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AACEncoder.h; sourceTree = "<group>"; };
-		A81536161C6790230085E2FC /* AACEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AACEncoder.m; sourceTree = "<group>"; };
 		A81536171C6790230085E2FC /* H264HWDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H264HWDecoder.h; sourceTree = "<group>"; };
 		A81536181C6790230085E2FC /* H264HWDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = H264HWDecoder.m; sourceTree = "<group>"; };
 		A81536191C6790230085E2FC /* H264HWEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H264HWEncoder.h; sourceTree = "<group>"; };
@@ -133,6 +131,9 @@
 		A8B0EFC41C69A33B0019EB1B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		A8B0EFC51C69A33B0019EB1B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		A8B0EFC61C69A33B0019EB1B /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		A8B0EFD51C69B99E0019EB1B /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
+		A8B0EFD71C69C4070019EB1B /* AACEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AACEncoder.h; sourceTree = "<group>"; };
+		A8B0EFD81C69C4070019EB1B /* AACEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AACEncoder.m; sourceTree = "<group>"; };
 		A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPLiveStreaming.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BCAEFE1C3B49CB000229C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A8BCAF001C3B49CB000229C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -161,6 +162,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8B0EFD61C69B99E0019EB1B /* CoreAudio.framework in Frameworks */,
 				A8B0EFC71C69A33B0019EB1B /* AudioToolbox.framework in Frameworks */,
 				A8B0EFC81C69A33B0019EB1B /* AVFoundation.framework in Frameworks */,
 				A8B0EFCA1C69A3440019EB1B /* CocoaAsyncSocket.framework in Frameworks */,
@@ -249,8 +251,6 @@
 				A81536181C6790230085E2FC /* H264HWDecoder.m */,
 				A81536191C6790230085E2FC /* H264HWEncoder.h */,
 				A815361A1C6790230085E2FC /* H264HWEncoder.m */,
-				A81536151C6790230085E2FC /* AACEncoder.h */,
-				A81536161C6790230085E2FC /* AACEncoder.m */,
 			);
 			path = Codec;
 			sourceTree = "<group>";
@@ -310,6 +310,7 @@
 		A8B0EFCF1C69A3600019EB1B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A8B0EFD51C69B99E0019EB1B /* CoreAudio.framework */,
 				A8B0EFC41C69A33B0019EB1B /* AudioToolbox.framework */,
 				A8B0EFC51C69A33B0019EB1B /* AVFoundation.framework */,
 				A8B0EFC61C69A33B0019EB1B /* VideoToolbox.framework */,
@@ -344,6 +345,8 @@
 				A815356C1C6782870085E2FC /* ViewController */,
 				A8BCAF001C3B49CB000229C3 /* AppDelegate.h */,
 				A8BCAF011C3B49CB000229C3 /* AppDelegate.m */,
+				A8B0EFD71C69C4070019EB1B /* AACEncoder.h */,
+				A8B0EFD81C69C4070019EB1B /* AACEncoder.m */,
 				A8BCAF061C3B49CB000229C3 /* Main.storyboard */,
 				A8BCAF091C3B49CB000229C3 /* Assets.xcassets */,
 				A8BCAF0B1C3B49CB000229C3 /* LaunchScreen.storyboard */,
@@ -510,7 +513,6 @@
 				A8B0EFB41C69A30D0019EB1B /* AppDelegate.m in Sources */,
 				A8B0EFD01C69A3B10019EB1B /* H264HWDecoder.m in Sources */,
 				A8B0EFD31C69A3B10019EB1B /* RTPClient.m in Sources */,
-				A8B0EFD21C69A3B10019EB1B /* AACEncoder.m in Sources */,
 				A8B0EFD11C69A3B10019EB1B /* H264HWEncoder.m in Sources */,
 				A8B0EFD41C69A3B10019EB1B /* RTSPClient.m in Sources */,
 			);
@@ -528,7 +530,7 @@
 				A8BCAF3B1C3E05D0000229C3 /* CameraViewController.m in Sources */,
 				A81536251C6790230085E2FC /* H264HWDecoder.m in Sources */,
 				A81536271C6790230085E2FC /* H264HWEncoder.m in Sources */,
-				A81536231C6790230085E2FC /* AACEncoder.m in Sources */,
+				A8B0EFD91C69C4080019EB1B /* AACEncoder.m in Sources */,
 				A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
