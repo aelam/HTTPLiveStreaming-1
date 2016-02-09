@@ -7,10 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <AVFoundation/AVFoundation.h>
-#import "H264HWEncoder.h"
-#import "AACEncoder.h"
 
-@interface CameraViewController : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate, H264HWEncoderDelegate, AACEncoderDelegate>
+@interface CameraViewController : UIViewController
 
 @end

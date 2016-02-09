@@ -673,9 +673,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="640" height="393"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YFg-v4-Hyn">
-                                <rect key="frame" x="0.0" y="33" width="640" height="360"/>
-                            </customView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wYp-10-Btf">
                                 <rect key="frame" x="285" y="-1" width="70" height="32"/>
                                 <buttonCell key="cell" type="push" title="Start" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TxJ-BX-yJc">
@@ -686,19 +683,22 @@
                                     <action selector="OnStartStop:" target="XfG-lQ-9wD" id="N17-Y4-CGO"/>
                                 </connections>
                             </button>
+                            <customView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ncn-fr-6Th">
+                                <rect key="frame" x="0.0" y="33" width="640" height="360"/>
+                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="wYp-10-Btf" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="86f-hE-dMG"/>
-                            <constraint firstItem="YFg-v4-Hyn" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="UG7-v4-eBy"/>
-                            <constraint firstItem="wYp-10-Btf" firstAttribute="top" secondItem="YFg-v4-Hyn" secondAttribute="bottom" constant="6" id="cSB-i3-HEU"/>
-                            <constraint firstItem="YFg-v4-Hyn" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="oYY-qr-3oe"/>
-                            <constraint firstAttribute="bottom" secondItem="wYp-10-Btf" secondAttribute="bottom" constant="6" id="rm7-xH-vCa"/>
-                            <constraint firstItem="YFg-v4-Hyn" firstAttribute="centerX" secondItem="wYp-10-Btf" secondAttribute="centerX" id="sUq-Xk-HzL"/>
+                            <constraint firstItem="Ncn-fr-6Th" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="6IG-Qc-V8c"/>
+                            <constraint firstItem="Ncn-fr-6Th" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="Dsh-Ln-gZd"/>
+                            <constraint firstItem="Ncn-fr-6Th" firstAttribute="centerX" secondItem="wYp-10-Btf" secondAttribute="centerX" id="LHa-dO-3OU"/>
+                            <constraint firstItem="wYp-10-Btf" firstAttribute="top" secondItem="Ncn-fr-6Th" secondAttribute="bottom" constant="6" id="XCa-lc-Iy0"/>
+                            <constraint firstItem="wYp-10-Btf" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="eN6-p0-wwQ"/>
+                            <constraint firstAttribute="bottom" secondItem="wYp-10-Btf" secondAttribute="bottom" constant="6" id="rJg-ti-FQb"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="StartStopButton" destination="wYp-10-Btf" id="IIk-m7-NBb"/>
-                        <outlet property="preview" destination="YFg-v4-Hyn" id="ImR-qe-ncT"/>
+                        <outlet property="preview" destination="Ncn-fr-6Th" id="NOC-if-dhB"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

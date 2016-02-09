@@ -7,10 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <AVFoundation/AVFoundation.h>
-#import "H264HWEncoder.h"
 
-@interface CameraViewController : NSViewController <AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate, H264HWEncoderDelegate>
+@interface CameraViewController : NSViewController
 
 @end
 
