@@ -1,8 +1,8 @@
 //
-//  CameraViewController.m
-//  HTTPLiveStreaming
+//  ViewController.m
+//  HLSforOSX
 //
-//  Created by Byeongwook Park on 2016. 1. 7..
+//  Created by Byeong-uk Park on 2016. 2. 9..
 //  Copyright © 2016년 Metapleasure. All rights reserved.
 //
 
@@ -26,7 +26,8 @@
     RTSPClient *rtsp;
     RTPClient *rtp;
 }
-@property (weak, nonatomic) IBOutlet UIButton *StartStopButton;
+@property (weak, nonatomic) IBOutlet NSButton *StartStopButton;
+@property (weak, nonatomic) IBOutlet NSView *preview;
 @end
 
 @implementation CameraViewController
@@ -36,7 +37,7 @@
     // Do any additional setup after loading the view.
     
     h264Encoder = [[H264HWEncoder alloc] init];
-    [h264Encoder setOutputSize:CGSizeMake(360, 640)];
+    [h264Encoder setOutputSize:CGSizeMake(640, 360)];
     h264Encoder.delegate = self;
     
     aacEncoder = [[AACEncoder alloc] init];
@@ -52,20 +53,21 @@
     [self initCamera];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)setRepresentedObject:(id)representedObject {
+    [super setRepresentedObject:representedObject];
+    
+    // Update the view, if already loaded.
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 // Called when start/stop button is pressed
 - (IBAction)OnStartStop:(id)sender {
@@ -73,11 +75,11 @@
     {
         [self startCamera];
         startCalled = false;
-        [_StartStopButton setTitle:@"Stop" forState:UIControlStateNormal];
+        [_StartStopButton setTitle:@"Stop"];
     }
     else
     {
-        [_StartStopButton setTitle:@"Start" forState:UIControlStateNormal];
+        [_StartStopButton setTitle:@"Start"];
         startCalled = true;
         [self stopCamera];
     }
@@ -128,14 +130,14 @@
     
     connectionVideo = [outputVideoDevice connectionWithMediaType:AVMediaTypeVideo];
     connectionAudio = [outputAudioDevice connectionWithMediaType:AVMediaTypeAudio];
-    [self setRelativeVideoOrientation];
+//    [self setRelativeVideoOrientation];
     
-    NSNotificationCenter* notify = [NSNotificationCenter defaultCenter];
-    
-    [notify addObserver:self
-               selector:@selector(statusBarOrientationDidChange:)
-                   name:@"StatusBarOrientationDidChange"
-                 object:nil];
+//    NSNotificationCenter* notify = [NSNotificationCenter defaultCenter];
+//    
+//    [notify addObserver:self
+//               selector:@selector(statusBarOrientationDidChange:)
+//                   name:@"StatusBarOrientationDidChange"
+//                 object:nil];
     
     
     [captureSession commitConfiguration];
@@ -145,12 +147,12 @@
     previewLayer = [AVCaptureVideoPreviewLayer    layerWithSession:captureSession];
     [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspect];
     
-    previewLayer.frame = self.view.bounds;
+    previewLayer.frame = self.preview.bounds;
 }
 
 - (void) startCamera
 {
-    [self.view.layer addSublayer:previewLayer];
+    [self.preview.layer addSublayer:previewLayer];
     
     [captureSession startRunning];
     
@@ -192,31 +194,31 @@
 //    fileAACHandle = NULL;
 }
 
-- (void)statusBarOrientationDidChange:(NSNotification*)notification {
-    [self setRelativeVideoOrientation];
-}
-
-- (void)setRelativeVideoOrientation {
-    switch ([[UIDevice currentDevice] orientation]) {
-        case UIInterfaceOrientationPortrait:
-#if defined(__IPHONE_8_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
-        case UIInterfaceOrientationUnknown:
-#endif
-            connectionVideo.videoOrientation = AVCaptureVideoOrientationPortrait;
-            break;
-        case UIInterfaceOrientationPortraitUpsideDown:
-            connectionVideo.videoOrientation = AVCaptureVideoOrientationPortraitUpsideDown;
-            break;
-        case UIInterfaceOrientationLandscapeLeft:
-            connectionVideo.videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
-            break;
-        case UIInterfaceOrientationLandscapeRight:
-            connectionVideo.videoOrientation = AVCaptureVideoOrientationLandscapeRight;
-            break;
-        default:
-            break;
-    }
-}
+//- (void)statusBarOrientationDidChange:(NSNotification*)notification {
+//    [self setRelativeVideoOrientation];
+//}
+//
+//- (void)setRelativeVideoOrientation {
+//    switch ([[UIDevice currentDevice] orientation]) {
+//        case UIInterfaceOrientationPortrait:
+//#if defined(__IPHONE_8_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
+//        case UIInterfaceOrientationUnknown:
+//#endif
+//            connectionVideo.videoOrientation = AVCaptureVideoOrientationPortrait;
+//            break;
+//        case UIInterfaceOrientationPortraitUpsideDown:
+//            connectionVideo.videoOrientation = AVCaptureVideoOrientationPortraitUpsideDown;
+//            break;
+//        case UIInterfaceOrientationLandscapeLeft:
+//            connectionVideo.videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
+//            break;
+//        case UIInterfaceOrientationLandscapeRight:
+//            connectionVideo.videoOrientation = AVCaptureVideoOrientationLandscapeRight;
+//            break;
+//        default:
+//            break;
+//    }
+//}
 
 -(void) captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection
 {
@@ -228,7 +230,7 @@
     else if(connection == connectionAudio)
     {
 //        NSLog( @"audio captured at ");
-        [aacEncoder encode:sampleBuffer];
+//        [aacEncoder encode:sampleBuffer];
     }
 }
 
@@ -263,7 +265,7 @@
 - (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp
 {
 //    NSLog(@"gotH264EncodedData %d", (int)[data length]);
-    
+
 //    if (fileH264Handle != NULL)
 //    {
 //        [fileH264Handle writeData:data];
@@ -277,12 +279,12 @@
 - (void)gotAACEncodedData:(NSData*)data timestamp:(CMTime)timestamp error:(NSError*)error
 {
 //    NSLog(@"gotAACEncodedData %d", (int)[data length]);
-    
+
 //    if (fileAACHandle != NULL)
 //    {
 //        [fileAACHandle writeData:data];
 //    }
-    
+
 //    [rtp publish:data timestamp:timestamp payloadType:96];
 }
 

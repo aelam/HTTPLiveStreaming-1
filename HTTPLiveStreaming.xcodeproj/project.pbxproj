@@ -14,6 +14,21 @@
 		A815362D1C6790230085E2FC /* RTSPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536221C6790230085E2FC /* RTSPClient.m */; };
 		A815363F1C6795A00085E2FC /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A815363A1C6795930085E2FC /* CocoaAsyncSocket.framework */; };
 		A81536401C6795A00085E2FC /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A815363A1C6795930085E2FC /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A8B0EFB41C69A30D0019EB1B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B0EFB31C69A30D0019EB1B /* AppDelegate.m */; };
+		A8B0EFB71C69A30D0019EB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B0EFB61C69A30D0019EB1B /* main.m */; };
+		A8B0EFBA1C69A30D0019EB1B /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B0EFB91C69A30D0019EB1B /* CameraViewController.m */; };
+		A8B0EFBC1C69A30D0019EB1B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8B0EFBB1C69A30D0019EB1B /* Assets.xcassets */; };
+		A8B0EFBF1C69A30D0019EB1B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8B0EFBD1C69A30D0019EB1B /* Main.storyboard */; };
+		A8B0EFC71C69A33B0019EB1B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8B0EFC41C69A33B0019EB1B /* AudioToolbox.framework */; };
+		A8B0EFC81C69A33B0019EB1B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8B0EFC51C69A33B0019EB1B /* AVFoundation.framework */; };
+		A8B0EFC91C69A33B0019EB1B /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8B0EFC61C69A33B0019EB1B /* VideoToolbox.framework */; };
+		A8B0EFCA1C69A3440019EB1B /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A815363C1C6795930085E2FC /* CocoaAsyncSocket.framework */; };
+		A8B0EFCB1C69A3440019EB1B /* CocoaAsyncSocket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A815363C1C6795930085E2FC /* CocoaAsyncSocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A8B0EFD01C69A3B10019EB1B /* H264HWDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536181C6790230085E2FC /* H264HWDecoder.m */; };
+		A8B0EFD11C69A3B10019EB1B /* H264HWEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361A1C6790230085E2FC /* H264HWEncoder.m */; };
+		A8B0EFD21C69A3B10019EB1B /* AACEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536161C6790230085E2FC /* AACEncoder.m */; };
+		A8B0EFD31C69A3B10019EB1B /* RTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A815361D1C6790230085E2FC /* RTPClient.m */; };
+		A8B0EFD41C69A3B10019EB1B /* RTSPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A81536221C6790230085E2FC /* RTSPClient.m */; };
 		A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAEFE1C3B49CB000229C3 /* main.m */; };
 		A8BCAF021C3B49CB000229C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF011C3B49CB000229C3 /* AppDelegate.m */; };
 		A8BCAF051C3B49CB000229C3 /* AAPLPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF041C3B49CB000229C3 /* AAPLPlayerViewController.m */; };
@@ -58,6 +73,13 @@
 			remoteGlobalIDString = 6CD9900F1B77868C0011A685;
 			remoteInfo = "iOS CocoaAsyncSocket";
 		};
+		A8B0EFCC1C69A3440019EB1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A81536331C6795930085E2FC /* CocoaAsyncSocket.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9FC41F121B9D965000578BEB;
+			remoteInfo = "Mac CocoaAsyncSocket";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -68,6 +90,17 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A81536401C6795A00085E2FC /* CocoaAsyncSocket.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A8B0EFCE1C69A3440019EB1B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A8B0EFCB1C69A3440019EB1B /* CocoaAsyncSocket.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,6 +121,18 @@
 		A81536211C6790230085E2FC /* RTSPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTSPClient.h; sourceTree = "<group>"; };
 		A81536221C6790230085E2FC /* RTSPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTSPClient.m; sourceTree = "<group>"; };
 		A81536331C6795930085E2FC /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
+		A8B0EFB01C69A30D0019EB1B /* HLSforOSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HLSforOSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8B0EFB21C69A30D0019EB1B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		A8B0EFB31C69A30D0019EB1B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		A8B0EFB61C69A30D0019EB1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A8B0EFB81C69A30D0019EB1B /* CameraViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraViewController.h; sourceTree = "<group>"; };
+		A8B0EFB91C69A30D0019EB1B /* CameraViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraViewController.m; sourceTree = "<group>"; };
+		A8B0EFBB1C69A30D0019EB1B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A8B0EFBE1C69A30D0019EB1B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A8B0EFC01C69A30D0019EB1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A8B0EFC41C69A33B0019EB1B /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		A8B0EFC51C69A33B0019EB1B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		A8B0EFC61C69A33B0019EB1B /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPLiveStreaming.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BCAEFE1C3B49CB000229C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A8BCAF001C3B49CB000229C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -112,6 +157,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A8B0EFAD1C69A30C0019EB1B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8B0EFC71C69A33B0019EB1B /* AudioToolbox.framework in Frameworks */,
+				A8B0EFC81C69A33B0019EB1B /* AVFoundation.framework in Frameworks */,
+				A8B0EFCA1C69A3440019EB1B /* CocoaAsyncSocket.framework in Frameworks */,
+				A8B0EFC91C69A33B0019EB1B /* VideoToolbox.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A8BCAEF71C3B49CB000229C3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -227,12 +283,47 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A8B0EFB11C69A30D0019EB1B /* HLSforOSX */ = {
+			isa = PBXGroup;
+			children = (
+				A8B0EFB21C69A30D0019EB1B /* AppDelegate.h */,
+				A8B0EFB31C69A30D0019EB1B /* AppDelegate.m */,
+				A8B0EFB81C69A30D0019EB1B /* CameraViewController.h */,
+				A8B0EFB91C69A30D0019EB1B /* CameraViewController.m */,
+				A8B0EFBB1C69A30D0019EB1B /* Assets.xcassets */,
+				A8B0EFBD1C69A30D0019EB1B /* Main.storyboard */,
+				A8B0EFC01C69A30D0019EB1B /* Info.plist */,
+				A8B0EFCF1C69A3600019EB1B /* Frameworks */,
+				A8B0EFB51C69A30D0019EB1B /* Supporting Files */,
+			);
+			path = HLSforOSX;
+			sourceTree = "<group>";
+		};
+		A8B0EFB51C69A30D0019EB1B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A8B0EFB61C69A30D0019EB1B /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A8B0EFCF1C69A3600019EB1B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A8B0EFC41C69A33B0019EB1B /* AudioToolbox.framework */,
+				A8B0EFC51C69A33B0019EB1B /* AVFoundation.framework */,
+				A8B0EFC61C69A33B0019EB1B /* VideoToolbox.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A8BCAEF11C3B49CB000229C3 = {
 			isa = PBXGroup;
 			children = (
 				A81536331C6795930085E2FC /* CocoaAsyncSocket.xcodeproj */,
 				A81536131C6790230085E2FC /* Core */,
 				A8BCAEFC1C3B49CB000229C3 /* HTTPLiveStreaming */,
+				A8B0EFB11C69A30D0019EB1B /* HLSforOSX */,
 				A8BCAEFB1C3B49CB000229C3 /* Products */,
 				A550C347E8B031626E7E2CF4 /* Pods */,
 			);
@@ -242,6 +333,7 @@
 			isa = PBXGroup;
 			children = (
 				A8BCAEFA1C3B49CB000229C3 /* HTTPLiveStreaming.app */,
+				A8B0EFB01C69A30D0019EB1B /* HLSforOSX.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -275,6 +367,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A8B0EFAF1C69A30C0019EB1B /* HLSforOSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A8B0EFC11C69A30D0019EB1B /* Build configuration list for PBXNativeTarget "HLSforOSX" */;
+			buildPhases = (
+				A8B0EFAC1C69A30C0019EB1B /* Sources */,
+				A8B0EFAD1C69A30C0019EB1B /* Frameworks */,
+				A8B0EFAE1C69A30C0019EB1B /* Resources */,
+				A8B0EFCE1C69A3440019EB1B /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A8B0EFCD1C69A3440019EB1B /* PBXTargetDependency */,
+			);
+			name = HLSforOSX;
+			productName = HLSforOSX;
+			productReference = A8B0EFB01C69A30D0019EB1B /* HLSforOSX.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A8BCAEF91C3B49CB000229C3 /* HTTPLiveStreaming */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A8BCAF111C3B49CB000229C3 /* Build configuration list for PBXNativeTarget "HTTPLiveStreaming" */;
@@ -303,6 +414,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = Metapleasure;
 				TargetAttributes = {
+					A8B0EFAF1C69A30C0019EB1B = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 					A8BCAEF91C3B49CB000229C3 = {
 						CreatedOnToolsVersion = 7.2;
 						SystemCapabilities = {
@@ -333,6 +447,7 @@
 			projectRoot = "";
 			targets = (
 				A8BCAEF91C3B49CB000229C3 /* HTTPLiveStreaming */,
+				A8B0EFAF1C69A30C0019EB1B /* HLSforOSX */,
 			);
 		};
 /* End PBXProject section */
@@ -362,6 +477,15 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A8B0EFAE1C69A30C0019EB1B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8B0EFBC1C69A30D0019EB1B /* Assets.xcassets in Resources */,
+				A8B0EFBF1C69A30D0019EB1B /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A8BCAEF81C3B49CB000229C3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -377,6 +501,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A8B0EFAC1C69A30C0019EB1B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8B0EFBA1C69A30D0019EB1B /* CameraViewController.m in Sources */,
+				A8B0EFB71C69A30D0019EB1B /* main.m in Sources */,
+				A8B0EFB41C69A30D0019EB1B /* AppDelegate.m in Sources */,
+				A8B0EFD01C69A3B10019EB1B /* H264HWDecoder.m in Sources */,
+				A8B0EFD31C69A3B10019EB1B /* RTPClient.m in Sources */,
+				A8B0EFD21C69A3B10019EB1B /* AACEncoder.m in Sources */,
+				A8B0EFD11C69A3B10019EB1B /* H264HWEncoder.m in Sources */,
+				A8B0EFD41C69A3B10019EB1B /* RTSPClient.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A8BCAEF61C3B49CB000229C3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -402,9 +541,22 @@
 			name = "iOS CocoaAsyncSocket";
 			targetProxy = A81536411C6795A00085E2FC /* PBXContainerItemProxy */;
 		};
+		A8B0EFCD1C69A3440019EB1B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Mac CocoaAsyncSocket";
+			targetProxy = A8B0EFCC1C69A3440019EB1B /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		A8B0EFBD1C69A30D0019EB1B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A8B0EFBE1C69A30D0019EB1B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 		A8BCAF061C3B49CB000229C3 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -440,6 +592,36 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		A8B0EFC21C69A30D0019EB1B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = HLSforOSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = per.whiteblue3.HLSforOSX;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A8B0EFC31C69A30D0019EB1B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = HLSforOSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = per.whiteblue3.HLSforOSX;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		A8BCAF0F1C3B49CB000229C3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -565,6 +747,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A8B0EFC11C69A30D0019EB1B /* Build configuration list for PBXNativeTarget "HLSforOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A8B0EFC21C69A30D0019EB1B /* Debug */,
+				A8B0EFC31C69A30D0019EB1B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		A8BCAEF51C3B49CB000229C3 /* Build configuration list for PBXProject "HTTPLiveStreaming" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>HLSforOSX.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>HTTPLiveStreaming.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -23,6 +28,11 @@
 			<true/>
 		</dict>
 		<key>A87435BD1C46219B0010D438</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A8B0EFAF1C69A30C0019EB1B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

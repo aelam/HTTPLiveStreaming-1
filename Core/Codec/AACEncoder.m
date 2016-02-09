@@ -57,7 +57,7 @@
     outAudioStreamBasicDescription.mReserved = 0; // Pads the structure out to force an even 8-byte alignment. Must be set to 0.
     AudioClassDescription *description = [self
                                           getAudioClassDescriptionWithType:kAudioFormatMPEG4AAC
-                                          fromManufacturer:kAppleSoftwareAudioCodecManufacturer];
+                                          fromManufacturer:'appl'];
     
     OSStatus status = AudioConverterNewSpecific(&inAudioStreamBasicDescription, &outAudioStreamBasicDescription, 1, description, &_audioConverter);
     if (status != 0) {
