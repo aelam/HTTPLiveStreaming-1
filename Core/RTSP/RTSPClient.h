@@ -15,6 +15,7 @@
 - (void)onRTSPDidConnectedFailed:(RTSPClient *)rtsp;
 - (void)onRTSPDidDisConnected:(RTSPClient *)rtsp;
 @optional
+- (void)onRTSP:(RTSPClient *)rtsp didSETUPWithServerPort:(NSNumber *)server_port;
 - (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSNumber *)server_port;
 - (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSNumber *)server_port;
 @end

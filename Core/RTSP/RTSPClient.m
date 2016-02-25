@@ -232,7 +232,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     session = [session stringByAppendingFormat:@"m=audio %d RTP/AVP 97\r\n", UDP_PORT + 1];
     session = [session stringByAppendingFormat:@"a=sendonly\r\n"];
     session = [session stringByAppendingFormat:@"a=rtpmap:97 MPEG4-GENERIC/44100/2\r\n"];
-    session = [session stringByAppendingFormat:@"a=fmtp:97 profile-level-id=1; mode=AAC-lbr; bitrate=64000\r\n"];
+    session = [session stringByAppendingFormat:@"a=fmtp:97 profile-level-id=2; mode=AAC-lbr; bitrate=64000\r\n"];
     session = [session stringByAppendingFormat:@"a=control:trackID=1\r\n"];
     session = [session stringByAppendingFormat:@"\r\n"];
     
@@ -256,7 +256,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     NSString* rtpHeader = [NSString stringWithFormat:@"SETUP %@ RTSP/1.0\r\n", [NSString stringWithFormat:@"rtsp://%@:%ld/%@/%@/trackID=1", self.address, (long)self.port, self.instance, self.streamName]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"CSeq: %d\r\n",cseq++];
     if(self.sessionid != nil) rtpHeader = [rtpHeader stringByAppendingFormat:@"Session: %@\r\n", self.sessionid];
-    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP/UDP;unicast;client_port=%d\r\n", UDP_PORT];
+    rtpHeader = [rtpHeader stringByAppendingFormat:@"Transport: RTP/AVP/UDP;unicast;client_port=%d\r\n", UDP_PORT + 1];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"Content-Length: %lu\r\n", (unsigned long)[session length]];
     rtpHeader = [rtpHeader stringByAppendingFormat:@"\r\n"];
     rtpHeader = [rtpHeader stringByAppendingString:session];
@@ -488,7 +488,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
             if(is200OK)
             {
                 readBuffer = [[NSMutableData alloc] init];
-                [self performSelector:@selector(sendRECORD)];
+                [self performSelector:@selector(sendSETUPAudio)];
             }
         }
     }

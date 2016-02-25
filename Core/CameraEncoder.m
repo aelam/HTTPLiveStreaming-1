@@ -22,10 +22,10 @@
     AACEncoder *aacEncoder;
 #endif
     AVCaptureSession *captureSession;
-    NSString *h264File;
-    NSString *aacFile;
-    NSFileHandle *fileH264Handle;
-    NSFileHandle *fileAACHandle;
+//    NSString *h264File;
+//    NSString *aacFile;
+//    NSFileHandle *fileH264Handle;
+//    NSFileHandle *fileAACHandle;
     AVCaptureConnection* connectionVideo;
     AVCaptureConnection* connectionAudio;
     RTSPClient *rtsp;
@@ -137,25 +137,25 @@
 {
     [captureSession startRunning];
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    
-    // Drop file to raw 264 track
-    h264File = [documentsDirectory stringByAppendingPathComponent:@"test.h264"];
-    [fileManager removeItemAtPath:h264File error:nil];
-    [fileManager createFileAtPath:h264File contents:nil attributes:nil];
-    
-    // Open the file using POSIX as this is anyway a test application
-    fileH264Handle = [NSFileHandle fileHandleForWritingAtPath:h264File];
-    
-    // Drop file to raw aac track
-    aacFile = [documentsDirectory stringByAppendingPathComponent:@"test.aac"];
-    [fileManager removeItemAtPath:aacFile error:nil];
-    [fileManager createFileAtPath:aacFile contents:nil attributes:nil];
-    
-    // Open the file using POSIX as this is anyway a test application
-    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
+//    NSFileManager *fileManager = [NSFileManager defaultManager];
+//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//    NSString *documentsDirectory = [paths objectAtIndex:0];
+//    
+//    // Drop file to raw 264 track
+//    h264File = [documentsDirectory stringByAppendingPathComponent:@"test.h264"];
+//    [fileManager removeItemAtPath:h264File error:nil];
+//    [fileManager createFileAtPath:h264File contents:nil attributes:nil];
+//    
+//    // Open the file using POSIX as this is anyway a test application
+//    fileH264Handle = [NSFileHandle fileHandleForWritingAtPath:h264File];
+//    
+//    // Drop file to raw aac track
+//    aacFile = [documentsDirectory stringByAppendingPathComponent:@"test.aac"];
+//    [fileManager removeItemAtPath:aacFile error:nil];
+//    [fileManager createFileAtPath:aacFile contents:nil attributes:nil];
+//    
+//    // Open the file using POSIX as this is anyway a test application
+//    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
     
     [rtsp connect:@"192.168.0.3" port:1935 instance:@"live" stream:@"mpegts"];
     
@@ -171,10 +171,10 @@
     [h264Encoder invalidate];
     [captureSession stopRunning];
     [rtsp close];
-    [fileH264Handle closeFile];
-    fileH264Handle = NULL;
-    [fileAACHandle closeFile];
-    fileAACHandle = NULL;
+//    [fileH264Handle closeFile];
+//    fileH264Handle = NULL;
+//    [fileAACHandle closeFile];
+//    fileAACHandle = NULL;
 }
 
 /**
@@ -258,7 +258,7 @@
         [fileAACHandle writeData:fullData];
         
         CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-        [rtp_aac publish:fullData timestamp:timestamp payloadType:96];
+        [rtp_aac publish:fullData timestamp:timestamp payloadType:97];
 #endif
     }
 }
