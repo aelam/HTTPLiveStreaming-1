@@ -9,11 +9,12 @@
 
 #import <Foundation/Foundation.h>
 #import <VideoToolbox/VideoToolbox.h>
+#import "H264Packet.h"
 
 @protocol H264HWEncoderDelegate <NSObject>
 
 @required
-- (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp;
+- (void)gotH264EncodedData:(NSData *)packet timestamp:(CMTime)timestamp;
 
 @end
 

@@ -44,6 +44,8 @@
 		A8BCAF321C3BBA14000229C3 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = A8BCAF2F1C3BBA14000229C3 /* Localizable.stringsdict */; };
 		A8BCAF3B1C3E05D0000229C3 /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCAF3A1C3E05D0000229C3 /* CameraViewController.m */; };
 		A8BCAF3D1C3E4EB9000229C3 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8BCAF3C1C3E4EB9000229C3 /* AudioToolbox.framework */; };
+		A8CC1DED1C7F064500712CCB /* H264Packet.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CC1DEC1C7F064500712CCB /* H264Packet.m */; };
+		A8CC1DEE1C7F064500712CCB /* H264Packet.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CC1DEC1C7F064500712CCB /* H264Packet.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +159,8 @@
 		A8BCAF391C3E05D0000229C3 /* CameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraViewController.h; sourceTree = "<group>"; };
 		A8BCAF3A1C3E05D0000229C3 /* CameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraViewController.m; sourceTree = "<group>"; };
 		A8BCAF3C1C3E4EB9000229C3 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		A8CC1DEB1C7F064500712CCB /* H264Packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H264Packet.h; sourceTree = "<group>"; };
+		A8CC1DEC1C7F064500712CCB /* H264Packet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = H264Packet.m; sourceTree = "<group>"; };
 		D7674F0CE54023DF7A8FADE2 /* Pods-HLSforOSX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HLSforOSX.release.xcconfig"; path = "Pods/Target Support Files/Pods-HLSforOSX/Pods-HLSforOSX.release.xcconfig"; sourceTree = "<group>"; };
 		FA46CE8F6B146DA795006CB8 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -257,6 +261,8 @@
 				A81536181C6790230085E2FC /* H264HWDecoder.m */,
 				A81536191C6790230085E2FC /* H264HWEncoder.h */,
 				A815361A1C6790230085E2FC /* H264HWEncoder.m */,
+				A8CC1DEB1C7F064500712CCB /* H264Packet.h */,
+				A8CC1DEC1C7F064500712CCB /* H264Packet.m */,
 				A8B0EFD71C69C4070019EB1B /* AACEncoder.h */,
 				A8B0EFD81C69C4070019EB1B /* AACEncoder.m */,
 			);
@@ -520,6 +526,7 @@
 				A8B0EFDD1C6A44800019EB1B /* CameraEncoder.m in Sources */,
 				A8B0EFD01C69A3B10019EB1B /* H264HWDecoder.m in Sources */,
 				A8B0EFD31C69A3B10019EB1B /* RTPClient.m in Sources */,
+				A8CC1DEE1C7F064500712CCB /* H264Packet.m in Sources */,
 				A8B0EFD11C69A3B10019EB1B /* H264HWEncoder.m in Sources */,
 				A8B0EFD41C69A3B10019EB1B /* RTSPClient.m in Sources */,
 			);
@@ -538,6 +545,7 @@
 				A81536251C6790230085E2FC /* H264HWDecoder.m in Sources */,
 				A81536271C6790230085E2FC /* H264HWEncoder.m in Sources */,
 				A8B0EFDC1C6A44800019EB1B /* CameraEncoder.m in Sources */,
+				A8CC1DED1C7F064500712CCB /* H264Packet.m in Sources */,
 				A8B0EFD91C69C4080019EB1B /* AACEncoder.m in Sources */,
 				A8BCAEFF1C3B49CB000229C3 /* main.m in Sources */,
 			);

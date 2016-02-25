@@ -13,9 +13,6 @@
 
 @implementation H264HWEncoder
 {
-    NSData *sps;
-    NSData *pps;
-    
     VTCompressionSessionRef session;
     CGSize outputSize;
 }
@@ -49,88 +46,11 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         return;
     }
     
-    CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false);
-    CFDictionaryRef attachment = (CFDictionaryRef)CFArrayGetValueAtIndex(attachments, 0);
-    CFBooleanRef dependsOnOthers = (CFBooleanRef)CFDictionaryGetValue(attachment, kCMSampleAttachmentKey_DependsOnOthers);
-    bool isKeyframe = (dependsOnOthers == kCFBooleanFalse);
     CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-    NSMutableData *fulldata = [NSMutableData data];
-    if (isKeyframe) {
-        
-        CMFormatDescriptionRef format = CMSampleBufferGetFormatDescription(sampleBuffer);
-        // CFDictionaryRef extensionDict = CMFormatDescriptionGetExtensions(format);
-        // Get the extensions
-        // From the extensions get the dictionary with key "SampleDescriptionExtensionAtoms"
-        // From the dict, get the value for the key "avcC"
-        
-        size_t sparameterSetSize, sparameterSetCount;
-        const uint8_t *sparameterSet;
-        OSStatus statusCode = CMVideoFormatDescriptionGetH264ParameterSetAtIndex(format, 0, &sparameterSet, &sparameterSetSize, &sparameterSetCount, 0 );
-        if (statusCode == noErr)
-        {
-            // Found sps and now check for pps
-            size_t pparameterSetSize, pparameterSetCount;
-            const uint8_t *pparameterSet;
-            OSStatus statusCode = CMVideoFormatDescriptionGetH264ParameterSetAtIndex(format, 1, &pparameterSet, &pparameterSetSize, &pparameterSetCount, 0 );
-            if (statusCode == noErr)
-            {
-                // Found pps
-                self->sps = [NSData dataWithBytes:sparameterSet length:sparameterSetSize];
-                self->pps = [NSData dataWithBytes:pparameterSet length:pparameterSetSize];
-                
-                const char bytes[] = "\x00\x00\x00\x01"; // SPS PPS Header
-                size_t length = (sizeof bytes) - 1; //string literals have implicit trailing '\0'
-                NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
-                NSMutableData *fullSPSData = [NSMutableData dataWithData:byteHeader];
-                NSMutableData *fullPPSData = [NSMutableData dataWithData:byteHeader];
-                
-                [fullSPSData appendData:self->sps];
-                [fullPPSData appendData:self->pps];
-                
-                [fulldata appendData:fullSPSData];
-                [fulldata appendData:fullPPSData];
-                
-                self->sps = fullSPSData;
-                self->pps = fullPPSData;
-            }
-        }
-    }
-    
-    CMBlockBufferRef dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
-    size_t length, totalLength;
-    char *dataPointer;
-    OSStatus statusCodeRet = CMBlockBufferGetDataPointer(dataBuffer, 0, &length, &totalLength, &dataPointer);
-    if (statusCodeRet == noErr) {
-        
-        size_t bufferOffset = 0;
-        static const int AVCCHeaderLength = 4;
-        while (bufferOffset < totalLength - AVCCHeaderLength) {
-            
-            // Read the NAL unit length
-            uint32_t NALUnitLength = 0;
-            memcpy(&NALUnitLength, dataPointer + bufferOffset, AVCCHeaderLength);
-            
-            // Convert the length value from Big-endian to Little-endian
-            NALUnitLength = CFSwapInt32BigToHost(NALUnitLength);
-            
-            NSData* data = [[NSData alloc] initWithBytes:(dataPointer + bufferOffset + AVCCHeaderLength) length:NALUnitLength];
-            
-            const char bytes[] = "\x00\x00\x00\x01"; // AVC Header
-            size_t length = (sizeof bytes) - 1; //string literals have implicit trailing '\0'
-            NSData *byteHeader = [NSData dataWithBytes:bytes length:length];
-            NSMutableData *fullAVCData = [NSMutableData dataWithData:byteHeader];
-            
-            [fullAVCData appendData:data];
-            
-            [fulldata appendData:fullAVCData];
-            
-            // Move to the next NAL unit in the block buffer
-            bufferOffset += AVCCHeaderLength + NALUnitLength;
-        }
-    }
+    H264Packet *packet = [[H264Packet alloc] initWithCMSampleBuffer:sampleBuffer];
     
     if (self.delegate != nil) {
-        [self.delegate gotH264EncodedData:fulldata timestamp:timestamp];
+        [self.delegate gotH264EncodedData:packet.packet timestamp:timestamp];
     }
 }
 
@@ -170,6 +90,8 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         VTSessionSetProperty(session, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
         VTSessionSetProperty(session, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_Baseline_3_0);
         VTSessionSetProperty(session, kVTCompressionPropertyKey_AspectRatio16x9, kCFBooleanTrue);
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanTrue);
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_ExpectedFrameRate, (__bridge CFTypeRef)@(30)); // osx will ignore this. 15fps static
         VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxKeyFrameInterval, (__bridge CFTypeRef)@(90));
         VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxH264SliceBytes, (__bridge CFTypeRef)@(184));
         
@@ -224,6 +146,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         VTCompressionSessionCompleteFrames(session, kCMTimeInvalid);
         VTCompressionSessionInvalidate(session);
         CFRelease(session);
+        session = NULL;
     }
 }
 

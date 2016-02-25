@@ -229,7 +229,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     session = [session stringByAppendingFormat:@"a=rtpmap:98 H264/90000\r\n"];
     session = [session stringByAppendingFormat:@"a=fmtp:98 packetization-mode=0;\r\n"];
     session = [session stringByAppendingFormat:@"a=control:trackID=0\r\n"];
-    session = [session stringByAppendingFormat:@"m=audio %d RTP/AVP 97\r\n", UDP_PORT];
+    session = [session stringByAppendingFormat:@"m=audio %d RTP/AVP 97\r\n", UDP_PORT + 1];
     session = [session stringByAppendingFormat:@"a=sendonly\r\n"];
     session = [session stringByAppendingFormat:@"a=rtpmap:97 MPEG4-GENERIC/44100/2\r\n"];
     session = [session stringByAppendingFormat:@"a=fmtp:97 profile-level-id=1; mode=AAC-lbr; bitrate=64000\r\n"];

@@ -29,7 +29,7 @@
     AVCaptureConnection* connectionVideo;
     AVCaptureConnection* connectionAudio;
     RTSPClient *rtsp;
-    RTPClient *rtp;
+    RTPClient *rtp_h264, *rtp_aac;
 }
 @end
 
@@ -49,13 +49,16 @@
     rtsp = [[RTSPClient alloc] init];
     rtsp.delegate = self;
     
-    rtp = [[RTPClient alloc] init];
+    rtp_h264 = [[RTPClient alloc] init];
+    rtp_aac = [[RTPClient alloc] init];
     
     [self initCamera];
 }
 
 - (void)dealloc {
+#if TARGET_OS_IPHONE
     [h264Encoder invalidate];
+#endif
 }
 
 #pragma mark - Camera Control
@@ -79,9 +82,6 @@
     NSString* key = (NSString*)kCVPixelBufferPixelFormatTypeKey;
     NSNumber* val = [NSNumber numberWithUnsignedInt:kCVPixelFormatType_420YpCbCr8BiPlanarFullRange];
     NSDictionary* videoSettings = [NSDictionary dictionaryWithObject:val forKey:key];
-    
-#if !TARGET_OS_IPHONE
-#endif
     
     outputVideoDevice.videoSettings = videoSettings;
     
@@ -157,14 +157,18 @@
     // Open the file using POSIX as this is anyway a test application
     fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
     
-    [rtsp connect:@"192.168.0.3" port:1935 instance:@"app" stream:@"mpegts"];
+    [rtsp connect:@"192.168.0.3" port:1935 instance:@"live" stream:@"mpegts"];
     
-    rtp.address = @"192.168.0.3";
-    rtp.port = 10000;
+    rtp_h264.address = @"192.168.0.3";
+    rtp_h264.port = 10000;
+    
+    rtp_aac.address = @"192.168.0.3";
+    rtp_aac.port = 10001;
 }
 
 - (void) stopCamera
 {
+    [h264Encoder invalidate];
     [captureSession stopRunning];
     [rtsp close];
     [fileH264Handle closeFile];
@@ -239,7 +243,9 @@
     }
     else if(connection == connectionAudio)
     {
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
+        [aacEncoder encode:sampleBuffer];
+#else
         CMBlockBufferRef dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
         size_t length, totalLength;
         char *dataPointer;
@@ -252,9 +258,7 @@
         [fileAACHandle writeData:fullData];
         
         CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-        [rtp publish:fullData timestamp:timestamp payloadType:96];
-#else
-        [aacEncoder encode:sampleBuffer];
+        [rtp_aac publish:fullData timestamp:timestamp payloadType:96];
 #endif
     }
 }
@@ -277,23 +281,23 @@
 
 - (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSNumber *)server_port
 {
-    
+    rtp_aac.port = [server_port intValue];
 }
 
 - (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSNumber *)server_port
 {
-    
+    rtp_h264.port = [server_port intValue];
 }
 
 #pragma mark -  H264HWEncoderDelegate declare
 
-- (void)gotH264EncodedData:(NSData*)data timestamp:(CMTime)timestamp
+- (void)gotH264EncodedData:(NSData *)packet timestamp:(CMTime)timestamp
 {
-//    NSLog(@"gotH264EncodedData %d", (int)[data length]);
+//    NSLog(@"gotH264EncodedData %d", (int)[packet length]);
+//    
+//    [fileH264Handle writeData:packet];
     
-    [fileH264Handle writeData:data];
-    
-    [rtp publish:data timestamp:timestamp payloadType:98];
+    [rtp_h264 publish:packet timestamp:timestamp payloadType:98];
 }
 
 #if TARGET_OS_IPHONE
@@ -302,13 +306,13 @@
 - (void)gotAACEncodedData:(NSData*)data timestamp:(CMTime)timestamp error:(NSError*)error
 {
 //    NSLog(@"gotAACEncodedData %d", (int)[data length]);
-
+//
 //    if (fileAACHandle != NULL)
 //    {
 //        [fileAACHandle writeData:data];
 //    }
 
-//    [rtp publish:data timestamp:timestamp payloadType:96];
+    [rtp_aac publish:data timestamp:timestamp payloadType:97];
 }
 #endif
 

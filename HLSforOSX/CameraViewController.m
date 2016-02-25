@@ -29,6 +29,8 @@
     [encoder initCameraWithOutputSize:CGSizeMake(640, 360)];
     startCalled = true;
     
+    [self.preview setWantsLayer:YES];
+    
     encoder.previewLayer.frame = self.preview.bounds;
     [self.preview.layer addSublayer:encoder.previewLayer];
 }
