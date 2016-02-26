@@ -171,6 +171,8 @@
     [h264Encoder invalidate];
     [captureSession stopRunning];
     [rtsp close];
+    [rtp_h264 reset];
+    [rtp_aac reset];
 //    [fileH264Handle closeFile];
 //    fileH264Handle = NULL;
 //    [fileAACHandle closeFile];

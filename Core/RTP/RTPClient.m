@@ -31,6 +31,8 @@ struct rtp_header {
     uint16_t seqNum;
     
     dispatch_queue_t queue;
+    
+    uint32_t start_t;
 }
 @end
 
@@ -47,12 +49,20 @@ struct rtp_header {
         self.address = nil;
         self.port = 554;
         seqNum = 0;
+        start_t = 0;
     }
     return self;
 }
 
 - (void)dealloc {
+    [self reset];
     [socket_rtp closeAfterSending];
+}
+
+- (void)reset
+{
+    start_t = 0;
+    seqNum = 0;
 }
 
 #pragma mark - Publish
@@ -60,6 +70,7 @@ struct rtp_header {
 - (void)publish:(NSData *)data timestamp:(CMTime)timestamp payloadType:(NSInteger)payloadType
 {
     int32_t t = ((float)timestamp.value / timestamp.timescale) * 1000;
+    if(start_t == 0) start_t = t;
     
     struct rtp_header header;
     
@@ -71,7 +82,7 @@ struct rtp_header {
     header.m = 0;
     header.pt = payloadType;
     header.seq = seqNum;
-    header.ts = t;
+    header.ts = t - start_t;
     header.ssrc = (u_int32_t)self.port;
     
     /* send RTP stream packet */
