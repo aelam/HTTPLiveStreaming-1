@@ -190,6 +190,10 @@
 //    fileH264Handle = NULL;
 //    [fileAACHandle closeFile];
 //    fileAACHandle = NULL;
+    
+#if !TARGET_OS_IPHONE
+    
+#endif
 }
 
 /**

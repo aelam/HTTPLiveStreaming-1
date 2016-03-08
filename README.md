@@ -35,4 +35,4 @@ This project is association with Wowza Media Server 4.3 over.
 
 # LICENSE #
 
-This project is under LGPL
+This project is under GPLv2

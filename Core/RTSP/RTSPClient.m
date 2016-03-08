@@ -212,11 +212,13 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
 - (void)sendANNOUNCE
 {
     NSString *myip = @"127.0.0.1";
+    NSString *fps = @"30";
 #if TARGET_OS_IPHONE
     myip = [self getIPAddress];
 #else
 //    NSLog(@"%@", [[NSHost currentHost] addresses]);
     myip = [[[NSHost currentHost] addresses] objectAtIndex:1];
+    fps = @"15";
 #endif
     
     NSString* session = @"v=0\r\n";
@@ -226,7 +228,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     session = [session stringByAppendingFormat:@"t=0 0\r\n"];
     session = [session stringByAppendingFormat:@"m=video %d RTP/AVP 98\r\n", UDP_PORT];
     session = [session stringByAppendingFormat:@"a=sendonly\r\n"];
-    session = [session stringByAppendingFormat:@"a=framerate:30\r\n"];
+    session = [session stringByAppendingFormat:@"a=framerate:%@\r\n", fps];
     session = [session stringByAppendingFormat:@"a=rtpmap:98 H264/90000\r\n"];
     session = [session stringByAppendingFormat:@"a=fmtp:98 packetization-mode=0;\r\n"];
     session = [session stringByAppendingFormat:@"a=control:trackID=0\r\n"];
