@@ -124,6 +124,7 @@
 		A81536221C6790230085E2FC /* RTSPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = RTSPClient.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A81536331C6795930085E2FC /* CocoaAsyncSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaAsyncSocket.xcodeproj; path = CocoaAsyncSocket/CocoaAsyncSocket.xcodeproj; sourceTree = "<group>"; };
 		A830468F1C8E537B00302B3B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A83046921C8E57EC00302B3B /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		A8B0EFB01C69A30D0019EB1B /* HLSforOSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HLSforOSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8B0EFB21C69A30D0019EB1B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AppDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A8B0EFB31C69A30D0019EB1B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -337,6 +338,7 @@
 			isa = PBXGroup;
 			children = (
 				A830468F1C8E537B00302B3B /* README.md */,
+				A83046921C8E57EC00302B3B /* LICENSE */,
 				A81536331C6795930085E2FC /* CocoaAsyncSocket.xcodeproj */,
 				A81536131C6790230085E2FC /* Core */,
 				A8BCAEFC1C3B49CB000229C3 /* HTTPLiveStreaming */,
