@@ -91,14 +91,15 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         VTSessionSetProperty(session, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_Baseline_3_0);
         VTSessionSetProperty(session, kVTCompressionPropertyKey_AspectRatio16x9, kCFBooleanTrue);
         VTSessionSetProperty(session, kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanTrue);
-        VTSessionSetProperty(session, kVTCompressionPropertyKey_ExpectedFrameRate, (__bridge CFTypeRef)@(30)); // osx will ignore this. 15fps static
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_ExpectedFrameRate, (__bridge CFTypeRef)@(29.97)); // osx will ignore this. 15fps static
         VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxKeyFrameInterval, (__bridge CFTypeRef)@(90));
-        VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxH264SliceBytes, (__bridge CFTypeRef)@(184));
+        VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxH264SliceBytes, (__bridge CFTypeRef)@(184)); // this is not working yet.
         
 #if !TARGET_OS_IPHONE
         VTSessionSetProperty(session, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, kCFBooleanTrue);
 #endif
         
+        // Bitrate is only working iOS. not Mac OSX
 #if TARGET_OS_IPHONE
         int bitrate = 600;
         int v = bitrate;

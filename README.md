@@ -19,6 +19,10 @@ This project is association with Wowza Media Server 4.3 over.
 
 - H264 MaxSlice option is not working. I use packetization mode 0 (Single NAL)
 
+- H264 kVTCompressionPropertyKey_ExpectedFrameRate is not working on Mac OS X. 15 fps static only
+
+- H264 bitrate is only working iOS. not Mac OS X.
+
 - RTSP Client is only working for stream publisher.
 
 - RTP Client is working. but timecode is not sure right.

@@ -37,6 +37,7 @@
     AVCaptureConnection* connectionAudio;
     RTSPClient *rtsp;
     RTPClient *rtp_h264, *rtp_aac;
+    BOOL isReadyVideo, isReadyAudio;
 }
 @end
 
@@ -59,6 +60,9 @@
     rtp_h264 = [[RTPClient alloc] init];
     rtp_aac = [[RTPClient alloc] init];
     
+    isReadyAudio = NO;
+    isReadyVideo = NO;
+    
     [self initCamera];
 }
 
@@ -66,6 +70,8 @@
 #if TARGET_OS_IPHONE
     [h264Encoder invalidate];
 #endif
+    isReadyAudio = NO;
+    isReadyVideo = NO;
 }
 
 #pragma mark - Camera Control
@@ -264,10 +270,10 @@
         NSMutableData *fullData = [NSMutableData dataWithData:adtsHeader];
         [fullData appendData:rawAAC];
         
-        [fileAACHandle writeData:fullData];
+//        [fileAACHandle writeData:fullData];
         
         CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-        [rtp_aac publish:fullData timestamp:timestamp payloadType:97];
+        if(isReadyVideo && isReadyAudio) [rtp_aac publish:fullData timestamp:timestamp payloadType:97];
 #endif
     }
 }
@@ -291,11 +297,13 @@
 - (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSNumber *)server_port
 {
     rtp_aac.port = [server_port intValue];
+    isReadyAudio = YES;
 }
 
 - (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSNumber *)server_port
 {
     rtp_h264.port = [server_port intValue];
+    isReadyVideo = YES;
 }
 
 #pragma mark -  H264HWEncoderDelegate declare
@@ -306,7 +314,7 @@
 //    
 //    [fileH264Handle writeData:packet];
     
-    [rtp_h264 publish:packet timestamp:timestamp payloadType:98];
+    if(isReadyVideo && isReadyAudio) [rtp_h264 publish:packet timestamp:timestamp payloadType:98];
 }
 
 #if TARGET_OS_IPHONE
@@ -321,7 +329,7 @@
 //        [fileAACHandle writeData:data];
 //    }
 
-//    [rtp_aac publish:data timestamp:timestamp payloadType:97];
+//    if(isReadyVideo && isReadyAudio) [rtp_aac publish:data timestamp:timestamp payloadType:97];
 }
 #endif
 
