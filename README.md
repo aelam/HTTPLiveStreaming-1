@@ -25,8 +25,6 @@ This project is association with Wowza Media Server 4.3 over.
 
 - RTSP Client is only working for stream publisher.
 
-- RTP Client is working. but timecode is not sure right.
-
 
 # TODO #
 

@@ -248,6 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				A81536141C6790230085E2FC /* Codec */,
+				A83046941C8E706300302B3B /* Container */,
 				A815361B1C6790230085E2FC /* RTP */,
 				A81536201C6790230085E2FC /* RTSP */,
 				A8B0EFDA1C6A447F0019EB1B /* CameraEncoder.h */,
@@ -297,6 +298,13 @@
 				A815363E1C6795930085E2FC /* CocoaAsyncSocket.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A83046941C8E706300302B3B /* Container */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Container;
 			sourceTree = "<group>";
 		};
 		A8B0EFB11C69A30D0019EB1B /* HLSforOSX */ = {
