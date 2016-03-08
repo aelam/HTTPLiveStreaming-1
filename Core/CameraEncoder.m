@@ -3,7 +3,7 @@
 //  HTTPLiveStreaming
 //
 //  Created by Byeong-uk Park on 2016. 2. 10..
-//  Copyright © 2016년 Metapleasure. All rights reserved.
+//  Copyright © 2016년 . All rights reserved.
 //
 
 #import "CameraEncoder.h"
@@ -14,6 +14,13 @@
 #if !TARGET_OS_IPHONE
 #import <CoreAudio/CoreAudio.h>
 #endif
+
+#define WMS_DOMAIN      @"ec2-52-79-124-139.ap-northeast-2.compute.amazonaws.com"
+#define WMS_MODULE      @"live"
+#define WMS_RTSP_PORT   1935
+#define WMS_STREAM      @"mpegts"
+#define WMS_VIDEO_PORT  10000
+#define WMS_AUDIO_PORT  10001
 
 @interface CameraEncoder () <RTSPClientDelegate>
 {
@@ -157,13 +164,13 @@
 //    // Open the file using POSIX as this is anyway a test application
 //    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
     
-    [rtsp connect:@"192.168.0.3" port:1935 instance:@"live" stream:@"mpegts"];
+    [rtsp connect:WMS_DOMAIN port:WMS_RTSP_PORT instance:WMS_MODULE stream:WMS_STREAM];
     
-    rtp_h264.address = @"192.168.0.3";
-    rtp_h264.port = 10000;
+    rtp_h264.address = WMS_DOMAIN;
+    rtp_h264.port = WMS_VIDEO_PORT;
     
-    rtp_aac.address = @"192.168.0.3";
-    rtp_aac.port = 10001;
+    rtp_aac.address = WMS_DOMAIN;
+    rtp_aac.port = WMS_AUDIO_PORT;
 }
 
 - (void) stopCamera
@@ -314,7 +321,7 @@
 //        [fileAACHandle writeData:data];
 //    }
 
-    [rtp_aac publish:data timestamp:timestamp payloadType:97];
+//    [rtp_aac publish:data timestamp:timestamp payloadType:97];
 }
 #endif
 

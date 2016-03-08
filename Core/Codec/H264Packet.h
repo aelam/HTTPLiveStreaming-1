@@ -3,7 +3,7 @@
 //  HTTPLiveStreaming
 //
 //  Created by Byeong-uk Park on 2016. 2. 25..
-//  Copyright © 2016년 Metapleasure. All rights reserved.
+//  Copyright © 2016년 . All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

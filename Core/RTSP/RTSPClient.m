@@ -3,7 +3,7 @@
 //  HTTPLiveStreaming
 //
 //  Created by Byeong-uk Park on 2016. 1. 26..
-//  Copyright © 2016년 Metapleasure. All rights reserved.
+//  Copyright © 2016년 . All rights reserved.
 //
 //  https://en.wikipedia.org/wiki/Real_Time_Streaming_Protocol
 //  http://stackoverflow.com/questions/17896008/can-ffmpeg-library-send-the-live-h264-ios-camera-stream-to-wowza-using-rtsp

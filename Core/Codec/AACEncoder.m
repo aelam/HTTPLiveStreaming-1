@@ -3,7 +3,7 @@
 //  HTTPLiveStreaming
 //
 //  Created by Byeongwook Park on 2016. 1. 8..
-//  Copyright © 2016년 Metapleasure. All rights reserved.
+//  Copyright © 2016년 . All rights reserved.
 //
 //  http://stackoverflow.com/questions/10817036/can-i-use-avcapturesession-to-encode-an-aac-stream-to-memory
 

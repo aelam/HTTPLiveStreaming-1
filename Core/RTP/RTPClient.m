@@ -3,7 +3,7 @@
 //  HTTPLiveStreaming
 //
 //  Created by Byeongwook Park on 2016. 1. 14..
-//  Copyright © 2016년 Metapleasure. All rights reserved.
+//  Copyright © 2016년 . All rights reserved.
 //
 //  https://en.wikipedia.org/wiki/Real_Time_Streaming_Protocol
 //  http://stackoverflow.com/questions/17896008/can-ffmpeg-library-send-the-live-h264-ios-camera-stream-to-wowza-using-rtsp
@@ -71,6 +71,7 @@ struct rtp_header {
 {
     int32_t t = ((float)timestamp.value / timestamp.timescale) * 1000;
     if(start_t == 0) start_t = t;
+//    NSLog(@"timestamp : %d", (t - start_t));
     
     struct rtp_header header;
     
