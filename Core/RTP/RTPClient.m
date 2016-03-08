@@ -71,7 +71,6 @@ struct rtp_header {
 {
     int32_t t = ((float)timestamp.value / timestamp.timescale) * 1000;
     if(start_t == 0) start_t = t;
-//    NSLog(@"timestamp : %d", (t - start_t));
     
     struct rtp_header header;
     

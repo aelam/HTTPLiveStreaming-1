@@ -136,6 +136,7 @@ static OSStatus inInputDataProc(AudioConverterRef inAudioConverter, UInt32 *ioNu
 
 - (void) encode:(CMSampleBufferRef)sampleBuffer {
     CFRetain(sampleBuffer);
+    CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     dispatch_async(_encoderQueue, ^{
         if (!_audioConverter) {
             [self setupEncoderFromSampleBuffer:sampleBuffer];
@@ -171,7 +172,6 @@ static OSStatus inInputDataProc(AudioConverterRef inAudioConverter, UInt32 *ioNu
         }
         if (self.delegate != nil) {
             dispatch_async(_callbackQueue, ^{
-                CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
                 [self.delegate gotAACEncodedData:data timestamp:timestamp error:error];
             });
         }

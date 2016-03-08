@@ -13,13 +13,13 @@ This project is association with Wowza Media Server 4.3 over.
 
 - for Mac OS X, AVFoundation is using hardware encoding. I using it.
 
-- AAC Hardware Encoding is not working on iOS. Mac OS X only (AVFoundation)
+- AAC Hardware Encoding is not working on iOS (Software Encoding). Mac OS X only (AVFoundation)
 
 - H264 Hardware Decoder is working perfectly.
 
 - H264 MaxSlice option is not working. I use packetization mode 0 (Single NAL)
 
-- H264 kVTCompressionPropertyKey_ExpectedFrameRate is not working on Mac OS X. 15 fps static only
+- H264 kVTCompressionPropertyKey_ExpectedFrameRate is not working on Mac OS X. (15 fps static only)
 
 - H264 bitrate is only working iOS. not Mac OS X.
 
@@ -27,16 +27,12 @@ This project is association with Wowza Media Server 4.3 over.
 
 - RTP Client is working. but timecode is not sure right.
 
-- AAC timestamps is not working perfectly. (iOS. Mac OS X was not checked)
-
 
 # TODO #
 
 - MPEG4 container format support
 
 - MPEG2-TS container format support
-
-- Checking RTP timestamp and AAC timestamp issue
 
 
 # LICENSE #

@@ -329,7 +329,7 @@
 //        [fileAACHandle writeData:data];
 //    }
 
-//    if(isReadyVideo && isReadyAudio) [rtp_aac publish:data timestamp:timestamp payloadType:97];
+    if(isReadyVideo && isReadyAudio) [rtp_aac publish:data timestamp:timestamp payloadType:97];
 }
 #endif
 

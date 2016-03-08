@@ -226,6 +226,7 @@ typedef NS_ENUM(NSInteger, RTSP_SEQ) {
     session = [session stringByAppendingFormat:@"t=0 0\r\n"];
     session = [session stringByAppendingFormat:@"m=video %d RTP/AVP 98\r\n", UDP_PORT];
     session = [session stringByAppendingFormat:@"a=sendonly\r\n"];
+    session = [session stringByAppendingFormat:@"a=framerate:30\r\n"];
     session = [session stringByAppendingFormat:@"a=rtpmap:98 H264/90000\r\n"];
     session = [session stringByAppendingFormat:@"a=fmtp:98 packetization-mode=0;\r\n"];
     session = [session stringByAppendingFormat:@"a=control:trackID=0\r\n"];
