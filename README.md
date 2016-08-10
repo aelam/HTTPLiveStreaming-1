@@ -1,6 +1,6 @@
 # README #
 
-This project is on working progress.
+This project is stop the developing now. Will restart later.
 
 This project is streaming H.264/AAC using iOS Video Tool Box to encode and send packet over RTP / RTSP
 
