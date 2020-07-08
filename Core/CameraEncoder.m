@@ -15,7 +15,8 @@
 #import <CoreAudio/CoreAudio.h>
 #endif
 
-#define WMS_DOMAIN      @"ec2-52-79-124-139.ap-northeast-2.compute.amazonaws.com"
+#define WMS_DOMAIN      @"10.30.28.26"
+//@"ec2-52-79-124-139.ap-northeast-2.compute.amazonaws.com"
 #define WMS_MODULE      @"live"
 #define WMS_RTSP_PORT   1935
 #define WMS_STREAM      @"mpegts"
@@ -54,8 +55,8 @@
     aacEncoder.delegate = self;
 #endif
     
-    rtsp = [[RTSPClient alloc] init];
-    rtsp.delegate = self;
+//    rtsp = [[RTSPClient alloc] init];
+//    rtsp.delegate = self;
     
     rtp_h264 = [[RTPClient alloc] init];
     rtp_aac = [[RTPClient alloc] init];
@@ -171,7 +172,7 @@
 //    fileAACHandle = [NSFileHandle fileHandleForWritingAtPath:aacFile];
     
     [rtsp connect:WMS_DOMAIN port:WMS_RTSP_PORT instance:WMS_MODULE stream:WMS_STREAM];
-    
+
     rtp_h264.address = WMS_DOMAIN;
     rtp_h264.port = WMS_VIDEO_PORT;
     
@@ -183,7 +184,7 @@
 {
     [h264Encoder invalidate];
     [captureSession stopRunning];
-    [rtsp close];
+//    [rtsp close];
     [rtp_h264 reset];
     [rtp_aac reset];
 //    [fileH264Handle closeFile];
@@ -262,7 +263,7 @@
     }
     else if(connection == connectionAudio)
     {
-#if TARGET_OS_IPHONE
+#if !TARGET_OS_IPHONE
         [aacEncoder encode:sampleBuffer];
 #else
         CMBlockBufferRef dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
@@ -277,7 +278,10 @@
 //        [fileAACHandle writeData:fullData];
         
         CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-        if(isReadyVideo && isReadyAudio) [rtp_aac publish:fullData timestamp:timestamp payloadType:97];
+        if (fullData.length > 0) {
+            [rtp_aac publish:fullData timestamp:timestamp payloadType:97];
+        }
+//        if(isReadyVideo && isReadyAudio) [rtp_aac publish:fullData timestamp:timestamp payloadType:97];
 #endif
     }
 }
@@ -301,13 +305,13 @@
 - (void)onRTSP:(RTSPClient *)rtsp didSETUP_AUDIOWithServerPort:(NSNumber *)server_port
 {
     rtp_aac.port = [server_port intValue];
-    isReadyAudio = YES;
+    //isReadyAudio = YES;
 }
 
 - (void)onRTSP:(RTSPClient *)rtsp didSETUP_VIDEOWithServerPort:(NSNumber *)server_port
 {
     rtp_h264.port = [server_port intValue];
-    isReadyVideo = YES;
+//    isReadyVideo = YES;
 }
 
 #pragma mark -  H264HWEncoderDelegate declare
@@ -333,7 +337,11 @@
 //        [fileAACHandle writeData:data];
 //    }
 
-    if(isReadyVideo && isReadyAudio) [rtp_aac publish:data timestamp:timestamp payloadType:97];
+    if (data) {
+         [rtp_aac publish:data timestamp:timestamp payloadType:97];
+    }
+    
+//    if(isReadyVideo && isReadyAudio) [rtp_aac publish:data timestamp:timestamp payloadType:97];
 }
 #endif
 

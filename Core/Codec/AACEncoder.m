@@ -61,7 +61,7 @@
     
     OSStatus status = AudioConverterNewSpecific(&inAudioStreamBasicDescription, &outAudioStreamBasicDescription, 1, description, &_audioConverter);
     if (status != 0) {
-//        NSLog(@"setup converter: %d", (int)status);
+        NSLog(@"setup converter: %d", (int)status);
     }
 }
 
@@ -79,7 +79,7 @@
                                     &encoderSpecifier,
                                     &size);
     if (st) {
-//        NSLog(@"error getting audio format propery info: %d", (int)(st));
+        NSLog(@"error getting audio format propery info: %d", (int)(st));
         return nil;
     }
     
@@ -91,7 +91,7 @@
                                 &size,
                                 descriptions);
     if (st) {
-//        NSLog(@"error getting audio format propery: %d", (int)(st));
+        NSLog(@"error getting audio format propery: %d", (int)(st));
         return nil;
     }
     
@@ -110,15 +110,15 @@ static OSStatus inInputDataProc(AudioConverterRef inAudioConverter, UInt32 *ioNu
 {
     AACEncoder *encoder = (__bridge AACEncoder *)(inUserData);
     UInt32 requestedPackets = *ioNumberDataPackets;
-    //NSLog(@"Number of packets requested: %d", (unsigned int)requestedPackets);
+    NSLog(@"Number of packets requested: %d", (unsigned int)requestedPackets);
     size_t copiedSamples = [encoder copyPCMSamplesIntoBuffer:ioData];
     if (copiedSamples < requestedPackets) {
-        //NSLog(@"PCM buffer isn't full enough!");
+        NSLog(@"PCM buffer isn't full enough!");
         *ioNumberDataPackets = 0;
         return -1;
     }
     *ioNumberDataPackets = 1;
-    //NSLog(@"Copied %zu samples into ioData", copiedSamples);
+    NSLog(@"Copied %zu samples into ioData", copiedSamples);
     return noErr;
 }
 
