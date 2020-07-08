@@ -60,6 +60,8 @@ rtp_send(unsigned char const *data, int len);
     dispatch_queue_t queue;
     
     uint32_t start_t;
+    
+    int ssrc;
 }
 @end
 
@@ -77,6 +79,8 @@ rtp_send(unsigned char const *data, int len);
         self.port = 554;
         seqNum = 0;
         start_t = 0;
+        
+        ssrc = rand();
     }
     return self;
 }
@@ -99,36 +103,78 @@ rtp_send(unsigned char const *data, int len);
     int32_t t = ((float)timestamp.value / timestamp.timescale) * 1000;
     if(start_t == 0) start_t = t;
     
-    struct rtp_header header;
+    if (0) {
+        struct rtp_header header;
+        
+        //fill the header array of byte with RTP header fields
+        header.v = 2;  // 2
+        header.p = 0;  // 1
+        header.x = 0;  // 1
+        header.cc = 0; // 4
+        header.m = 0;  // 1
+        header.pt = 0;//payloadType;
+        header.seq = seqNum;
+        header.ts = t;
+        header.ssrc = ssrc;
+        
+        /* send RTP stream packet */
+        
+        int*cast = (int *) &header;
+        
+        NSMutableData *packet = [NSMutableData dataWithBytes:&header length:12];
+        [packet appendData:data];
+        
+        NSLog(@"OC HEADER: %@", [[NSData alloc] initWithBytes:&header length:12]);
+        
+        
+        rtp_initialization();
+        NSData* nsdata = rtp_send(data.bytes, data.length);
+        [socket_rtp sendData:nsdata toHost:self.address port:self.port withTimeout:-1 tag:0];
+    }
     
-    //fill the header array of byte with RTP header fields
-    header.v = 2;  // 2
-    header.p = 0;  // 1
-    header.x = 0;  // 1
-    header.cc = 0; // 4
-    header.m = 0;  // 1
-    header.pt = 0;//payloadType;
-    header.seq = seqNum;
-    header.ts = t - start_t;
-    header.ssrc = (u_int32_t)self.port;
-    
-    /* send RTP stream packet */
-    
-    int    *cast = (int *) &header;
-    
-    NSMutableData *packet = [NSMutableData dataWithBytes:&header length:12];
-    [packet appendData:data];
-
-    NSLog(@"OC HEADER: %@", [[NSData alloc] initWithBytes:&header length:12]);
-    
-    rtp_initialization();
-    NSData* data2 = rtp_send(data.bytes, data.length);
-
-    [socket_rtp sendData:(NSData *)data2 toHost:self.address port:self.port withTimeout:-1 tag:0];
+    if (1){
+        NSMutableData *nsdata = nil;
+        struct rtpheader *foo = &RTPheader;
+        
+        foo->b.v = 2;
+        foo->b.p = 0;
+        foo->b.x = 0;
+        foo->b.cc = 0;
+        foo->b.m = 0;
+        foo->b.pt = 97;     /* MPEG Audio */
+        foo->b.sequence = rand() & 65535;
+        foo->timestamp = t - start_t;
+        foo->ssrc = ssrc;
+        foo->iAudioHeader = 0;
+        
+        int len = (int)nsdata.length;
+        unsigned char const *cdata = data.bytes;
+        
+        char   *buffer = malloc(len + sizeof(struct rtpheader));
+        int    *cast = (int *) foo;
+        int    *outcast = (int *) buffer;
+        int    size;
+        
+        outcast[0] = htonl(cast[0]);
+        outcast[1] = htonl(cast[1]);
+        outcast[2] = htonl(cast[2]);
+        outcast[3] = htonl(cast[3]);
+        memmove(buffer + sizeof(struct rtpheader), cdata, len);
+        size = len + sizeof(*foo);
+        //count = send(s, buffer, size, 0);
+        
+        nsdata = [[NSMutableData alloc] initWithBytes:buffer length:size];
+        [nsdata appendData:data];
+        
+        free(buffer);
+        
+        [socket_rtp sendData:nsdata toHost:self.address port:self.port withTimeout:-1 tag:0];
+        
+    }
     
     seqNum++;
-
-
+    NSLog(@"seqNum: %d", seqNum);
+    
 }
 
 
@@ -148,7 +194,7 @@ rtp_initialization(void)
     foo->b.x = 0;
     foo->b.cc = 0;
     foo->b.m = 0;
-    foo->b.pt = 0;     /* MPEG Audio */
+    foo->b.pt = 96;     /* MPEG Audio */
     foo->b.sequence = rand() & 65535;
     foo->timestamp = rand();
     foo->ssrc = rand();
@@ -159,12 +205,23 @@ static NSData *
 rtp_send(unsigned char const *data, int len)
 {
     struct rtpheader *foo = &RTPheader;
-//    foo->iAudioHeader = 1;
+    
+    foo->b.v = 2;
+    foo->b.p = 0;
+    foo->b.x = 0;
+    foo->b.cc = 0;
+    foo->b.m = 0;
+    foo->b.pt = 14;     /* MPEG Audio */
+    foo->b.sequence = rand() & 65535;
+    foo->timestamp = rand();
+    foo->ssrc = rand();
+    foo->iAudioHeader = 0;
+    
     char   *buffer = malloc(len + sizeof(struct rtpheader));
     int    *cast = (int *) foo;
     int    *outcast = (int *) buffer;
     int     count, size;
-
+    
     outcast[0] = htonl(cast[0]);
     outcast[1] = htonl(cast[1]);
     outcast[2] = htonl(cast[2]);
@@ -176,6 +233,6 @@ rtp_send(unsigned char const *data, int len)
     NSData *nsdata = [[NSData alloc] initWithBytes:buffer length:size];
     
     free(buffer);
-
+    
     return nsdata;
 }

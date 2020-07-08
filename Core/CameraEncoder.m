@@ -15,7 +15,7 @@
 #import <CoreAudio/CoreAudio.h>
 #endif
 
-#define WMS_DOMAIN      @"10.30.28.26"
+#define WMS_DOMAIN      @"127.0.0.1"
 //@"ec2-52-79-124-139.ap-northeast-2.compute.amazonaws.com"
 #define WMS_MODULE      @"live"
 #define WMS_RTSP_PORT   1935
@@ -263,7 +263,7 @@
     }
     else if(connection == connectionAudio)
     {
-#if !TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
         [aacEncoder encode:sampleBuffer];
 #else
         CMBlockBufferRef dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
